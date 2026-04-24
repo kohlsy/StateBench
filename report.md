@@ -132,7 +132,7 @@ Each task is generated from a **latent rule graph** — a Python object that is 
 
 1. **Domain selection**: one of four domains (refund, approval, access_control, escalation), each with domain-specific variables, decision types, and definition templates.
 2. **Initial graph**: `n_rules` (12–16) rules are generated with random conditions over domain variables, random decisions, and 40% probability of override relationships. All numeric conditions reference shared definitions via `{definition_name}` syntax.
-3. **Update skeleton**: a pre-planned sequence of update types is selected based on `n_updates` (8–10). Each skeleton guarantees: 3 `change_priority` slots, 2 `revoke_rule` slots, 1 `chain_create`, 1–2 `chain_ref` (dependency chain), 1 `no_op_disguised`.
+3. **Update skeleton**: a pre-planned sequence of update types is selected based on `n_updates` (8–10). Each skeleton guarantees: 3 `change_priority` slots, 2 `revoke_rule` slots, 1 `chain_create`, 1–2 `chain_ref` (dependency chain), 1 `no_op_disguised`. The skeleton fixes the **shape** of difficulty — the specific rules being swapped, revoked, or created are determined by the random seed and vary completely across tasks.
 4. **Update execution**: each slot type is instantiated against the current graph state, mutates the graph, and generates a natural-language description in uniform memo style.
 5. **Gold policy**: the final state of the latent graph after all updates.
 6. **Description format**: all update descriptions use the same surface form regardless of operation type — `"When [conditions], [decision]."` — to prevent the model from inferring operation type from wording alone.
