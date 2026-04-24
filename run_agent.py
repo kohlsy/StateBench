@@ -81,8 +81,7 @@ The policy DSL:
 - Empty conditions = default/fallback rule (matches everything)
 - The overrides field is informational; priority determines which rule actually wins
 
-CRITICAL: You have NO behavioral oracle.
-There is no run_tests() and no find_counterexample().
+CRITICAL: You have NO behavioral feedback before submission.
 compile_check() tells you only whether the YAML parses — it gives no behavioral feedback.
 edit_policy() returns only {"status":"ok"} — no structural hints.
 You must reason your way to the correct policy — you cannot verify behavioral correctness before submitting.

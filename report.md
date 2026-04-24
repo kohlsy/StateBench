@@ -73,8 +73,7 @@ The agent has exactly five tools:
 | `submit()` | Final behavioral score | Revealed only after submission |
 
 Critically absent:
-- No `run_tests()` — no behavioral preview
-- No `find_counterexample()` — no targeted error feedback
+- No behavioral preview tool — the model cannot check correctness before submitting
 - No rule count, priority list, or structural summary from any tool
 
 ### Reward
@@ -263,18 +262,7 @@ The benchmark can scale to thousands of tasks across all four domains with contr
 
 ## Results Summary
 
-### Calibration progression (claude-sonnet-4-6)
-
-| Configuration | Pass Rate | Avg Score | Notes |
-|---------------|-----------|-----------|-------|
-| With oracle tools (run_tests + find_counterexample) | 86.7% | 0.951 | Tools leaked gold behavior; model iterated to answer |
-| Oracle removed, 10-tool cap | 65.0% | 0.923 | Still too easy; compile_check provided structural hints |
-| Clean memo descriptions, no oracle | 70.0% | 0.941 | Operation-type signals removed; still too easy |
-| **Priority/revocation skeleton (3 swaps + 2 revocations)** | **16.7%** | **0.772** | **Target zone achieved** |
-
-The progression from 86.7% to 16.7% documents each design decision: removing oracle feedback, removing structural leakage, and finally guaranteeing the specific update types that break global coherence tracking.
-
-### Cross-model comparison (final benchmark configuration)
+### Cross-model comparison
 
 | Model | Provider | Type | Tasks | Pass Rate | Avg Score | Avg Tool Calls |
 |-------|----------|------|-------|-----------|-----------|----------------|

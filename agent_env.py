@@ -3,9 +3,9 @@ StateBench Agent Environment
 
 Tools: read_policy, read_updates, edit_policy, compile_check, submit.
 
-No behavioral oracle — no run_tests(), no find_counterexample().
 edit_policy() is blind: returns only {"status":"ok"}.
 compile_check() returns only pass/fail with minimal error message.
+No behavioral feedback is available before submit().
 """
 
 from __future__ import annotations
@@ -111,7 +111,7 @@ class StateBenchEnvironment:
 4. compile_check() -> Check YAML syntax. Returns {"status":"ok"} or {"status":"compile_error","message":"..."}.
 5. submit() -> Submit your final policy for scoring (irreversible)
 
-There is no run_tests(), no find_counterexample(), no behavioral preview before submit."""
+No behavioral feedback is available before submit()."""
 
 
 def format_task_prompt(env: StateBenchEnvironment) -> str:

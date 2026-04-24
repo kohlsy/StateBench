@@ -497,21 +497,21 @@ rules:
     </div>
 
     <div>
-      <h3>What was deliberately removed</h3>
+      <h3>What is deliberately absent</h3>
 
       <div class="card" style="margin-bottom:12px;">
-        <p class="absent">run_tests()</p>
-        <p style="font-size:0.88rem; margin-top:6px;">Would let the model preview behavioral errors and iterate to a correct answer. With this tool: <strong style="color:var(--green)">86.7% pass rate</strong>. That's not a benchmark — it's a search problem.</p>
+        <p class="absent">Behavioral preview</p>
+        <p style="font-size:0.88rem; margin-top:6px;">No tool lets the model check whether its edited policy is behaviorally correct before submitting. The model must reason its way to the answer — it cannot iterate toward it using feedback.</p>
       </div>
 
       <div class="card" style="margin-bottom:12px;">
-        <p class="absent">find_counterexample()</p>
-        <p style="font-size:0.88rem; margin-top:6px;">Would pinpoint exactly which scenario type was wrong, giving targeted feedback for each iteration.</p>
+        <p class="absent">Structural summary</p>
+        <p style="font-size:0.88rem; margin-top:6px;">No tool returns rule IDs, rule counts, or a priority list. The model must track structural state entirely from its own reads of the policy YAML.</p>
       </div>
 
       <div class="card">
-        <p class="absent">check_references()</p>
-        <p style="font-size:0.88rem; margin-top:6px;">Would return rule IDs, counts, and structural summary — leaking information about the current state that compile_check intentionally withholds.</p>
+        <p class="absent">Error localisation</p>
+        <p style="font-size:0.88rem; margin-top:6px;">No tool pinpoints which scenario type is wrong. Submission is the only moment of truth — and it's irreversible.</p>
       </div>
     </div>
   </div>
@@ -1118,10 +1118,10 @@ final:    True</pre>
 Your task is to update a YAML policy
 to correctly reflect a set of changes.
 
-CRITICAL: You have NO behavioral oracle.
-There is no run_tests() and no
-find_counterexample(). compile_check()
-tells you only whether YAML parses.
+CRITICAL: You have NO behavioral
+feedback before submission.
+compile_check() tells you only whether
+YAML parses — no behavioral hints.
 edit_policy() returns only {"status":"ok"}.
 
 Think globally. Submit when confident.</pre>

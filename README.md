@@ -104,8 +104,7 @@ The agent has exactly five tools:
 | `submit()` | Final behavioral score | Revealed only after submission |
 
 Critically absent:
-- No `run_tests()` — no behavioral preview
-- No `find_counterexample()` — no targeted error feedback
+- No behavioral preview tool — the model cannot check correctness before submitting
 - No structural summary (rule count, priority list, IDs) from any tool
 
 `edit_policy()` is a blind replace: it returns `{"status": "ok"}` regardless of content. `compile_check()` returns only whether the YAML parses — no behavioral information, no rule counts, no structural summary.
