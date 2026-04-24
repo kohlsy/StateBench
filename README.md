@@ -154,10 +154,10 @@ Each task is generated from a **latent rule graph** — a Python object never sh
 
 ## Results
 
-| Model | Provider | Tasks | Pass Rate | Avg Score |
-|-------|----------|-------|-----------|-----------|
-| claude-sonnet-4-6 | Anthropic | 18 | **16.7%** | 0.772 |
-| o3 | OpenAI | 20 | **10.0%** | 0.650 |
+| Model | Provider | Tasks | Pass Rate | Avg Score | Results file |
+|-------|----------|-------|-----------|-----------|--------------|
+| claude-sonnet-4-6 | Anthropic | 18 | **16.7%** | 0.772 | `results/priority_push/results_claude-sonnet-4-6.json` |
+| o3 | OpenAI | 20 | **10.0%** | 0.650 | `results/openai_push/results_o3.json` |
 
 Both a standard frontier model and OpenAI's most capable reasoning model score below 17% on the ultra-hard suite. The failure mode is identical across both models.
 
