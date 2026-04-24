@@ -222,6 +222,17 @@ step 5: submit()          → {final_score: 1.0, mismatches: 0}
 
 **Domain**: approval | **Rules**: 13 | **Updates**: 9
 
+**Update stream:**
+1. `Cases where the request amount is less than 100 should result in deny the request.` *(chain_create)*
+2. `Cases satisfying both [the budget status is not active, and the request amount is at least 5000, and the department is engineering or marketing or ops or sales] and [the budget status is not active] result in require manager approval, not auto-approve the request.` *(priority swap #1)*
+3. `No distinct rule governs cases where the budget status is active, and the recurring flag is not active.` *(revoke #1)*
+4. `When the request amount is less than 100, require manager approval.` *(chain_ref — changes decision of rule from update 1)*
+5. `Where the request amount is at least 5000, and the expense type is travel or consulting and the budget status is active overlap, auto-approve the request is the applicable outcome.` *(priority swap #2)*
+6. `No distinct rule governs cases where the request amount is less than 100.` *(revoke #2)*
+7. `Where the request amount is at least 5000, and the budget status is active, and the department is sales and the requester level is director or intern or vp, and the request amount exceeds 10000 overlap, require VP approval is the applicable outcome.` *(priority swap #3)*
+8. `Cases where the requester level is director or intern or vp, and the request amount exceeds 10000 should result in deny the request.` *(no-op disguised)*
+9. `Cases where the request amount is less than 100, and the request amount is at least 10000 should result in require manager approval.` *(chain_ref — references chain rule after revocation; model must recognise rule no longer exists)*
+
 Claude correctly:
 - Applied the chain_create (new rule for `amount < 100 → deny`)
 - Tracked the chain_ref decision change two updates later

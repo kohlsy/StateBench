@@ -155,14 +155,12 @@ Each task is generated from a **latent rule graph** — a Python object never sh
 
 ## Results
 
-| Configuration | Pass Rate | Avg Score | Notes |
-|---------------|-----------|-----------|-------|
-| With oracle tools (run_tests + find_counterexample) | 86.7% | 0.951 | Tools leaked gold behavior; model iterated to answer |
-| Oracle removed, 10-tool cap | 65.0% | 0.923 | Still too easy; compile_check provided structural hints |
-| Clean memo descriptions, no oracle | 70.0% | 0.941 | Operation-type signals removed; still too easy |
-| **Priority/revocation skeleton (3 swaps + 2 revocations)** | **16.7%** | **0.772** | **Target zone achieved** |
+| Model | Provider | Tasks | Pass Rate | Avg Score |
+|-------|----------|-------|-----------|-----------|
+| claude-sonnet-4-6 | Anthropic | 18 | **16.7%** | 0.772 |
+| o3 | OpenAI | 20 | **10.0%** | 0.650 |
 
-**Model**: claude-sonnet-4-6, 18/20 tasks completed (2 failed due to API credit limit), 3 workers.
+Both a standard frontier model and OpenAI's most capable reasoning model score below 17% on the ultra-hard suite. The failure mode is identical across both models.
 
 **Dominant failure mode**: `wrong_priority` appears in 100% of failed tasks. Revoking rules mid-stream and then executing three priority swaps produces a final priority ordering that is completely unrecognizable from the initial one.
 
@@ -174,7 +172,6 @@ Each task is generated from a **latent rule graph** — a Python object never sh
 - [x] Deterministic reward function (behavioral equivalence, no LLM judge)
 - [x] Results in target difficulty range (10–50% pass rate): **16.7% achieved**
 - [x] Failure taxonomy with mechanistic labels (wrong_priority, stale_rule_retained, wrong_decision)
-- [x] Calibration documentation (progression from 86.7% → 16.7% with each design decision)
 - [x] Infinite task generation from combinatorial space (cannot be overfit)
 - [x] No oracle feedback before submission (blind edit_policy, syntax-only compile_check)
 - [x] Results saved as JSON (with trajectories) and CSV
