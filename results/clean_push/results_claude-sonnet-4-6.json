@@ -1,0 +1,1413 @@
+[
+  {
+    "task_id": "task_0000",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 12,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.224,
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.793,
+    "success": false,
+    "n_tool_calls": 7,
+    "elapsed_seconds": 280.1,
+    "failure_breakdown": {
+      "wrong_priority": 414
+    },
+    "static_issues": [],
+    "trajectory_length": 7,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 1862
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 8
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  standard_window: 60\n  extended_window: 90\n  max_refund_amount: 100\nrules:\n- id: r001\n  conditions: []\n  decision: escalate_to_manager\n  priority: 1\n- id: r002\n  conditions:\n  - is_final"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "compile_error",
+          "message": "Duplicate priorities: {6}"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  standard_window: 60\n  extended_window: 90\n  max_refund_amount: 100\nrules:\n- id: r001\n  conditions: []\n  decision: escalate_to_manager\n  priority: 1\n- id: r002\n  conditions:\n  - is_final"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 6,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 7,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 0.793,
+          "total_scenarios": 2000,
+          "matches": 1586,
+          "mismatches": 414,
+          "failure_breakdown": {
+            "wrong_priority": 414
+          },
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0001",
+    "domain": "approval",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 13,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.398,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 30.1,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 1844
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  auto_approve_limit: 100\n  manager_limit: 5000\n  director_limit: 10000\nrules:\n- id: r001\n  conditions: []\n  decision: manager_approval\n  priority: 1\n- id: r002\n  conditions:\n  - amount >"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0002",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 14,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.494,
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.9495,
+    "success": false,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 35.8,
+    "failure_breakdown": {
+      "stale_rule_retained": 56,
+      "wrong_priority": 36,
+      "wrong_decision": 9
+    },
+    "static_issues": [
+      "Rule 'chain_1_rule' overrides non-existent rule 'rule_5'",
+      "Rule 'chain_6_rule' overrides non-existent rule 'rule_8'"
+    ],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2157
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 10
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  new_account_threshold: 7\n  lockout_threshold: 3\n  mfa_grace_period: 30\nrules:\n- id: r001\n  conditions: []\n  decision: grant_access\n  priority: 1\n- id: r002\n  conditions:\n  - resource_se"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 0.9495,
+          "total_scenarios": 2000,
+          "matches": 1899,
+          "mismatches": 101,
+          "failure_breakdown": {
+            "stale_rule_retained": 56,
+            "wrong_priority": 36,
+            "wrong_decision": 9
+          },
+          "static_issues": [
+            "Rule 'chain_1_rule' overrides non-existent rule 'rule_5'",
+            "Rule 'chain_6_rule' overrides non-existent rule 'rule_8'"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0003",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 16,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.596,
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.908,
+    "success": false,
+    "n_tool_calls": 7,
+    "elapsed_seconds": 108.6,
+    "failure_breakdown": {
+      "wrong_priority": 161,
+      "wrong_decision": 23
+    },
+    "static_issues": [],
+    "trajectory_length": 7,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2691
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  standard_window: 14\n  extended_window: 90\n  max_refund_amount: 100\nrules:\n- id: r001\n  conditions: []\n  decision: approve_refund\n  priority: 1\n- id: r002\n  conditions:\n  - customer_tier"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  standard_window: 14\n  extended_window: 90\n  max_refund_amount: 100\nrules:\n- id: r001\n  conditions: []\n  decision: approve_refund\n  priority: 1\n- id: r002\n  conditions:\n  - customer_tier"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 6,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 7,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 0.908,
+          "total_scenarios": 2000,
+          "matches": 1816,
+          "mismatches": 184,
+          "failure_breakdown": {
+            "wrong_priority": 161,
+            "wrong_decision": 23
+          },
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0004",
+    "domain": "approval",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 12,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.566,
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.936,
+    "success": false,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 80.5,
+    "failure_breakdown": {
+      "wrong_decision": 128
+    },
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 1806
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 10
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  auto_approve_limit: 500\n  manager_limit: 2500\n  director_limit: 50000\nrules:\n- id: r001\n  conditions: []\n  decision: vp_approval\n  priority: 1\n- id: r002\n  conditions:\n  - is_recurring "
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 0.936,
+          "total_scenarios": 2000,
+          "matches": 1872,
+          "mismatches": 128,
+          "failure_breakdown": {
+            "wrong_decision": 128
+          },
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0005",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 13,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.474,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 131.5,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2052
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 8
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  new_account_threshold: 30\n  lockout_threshold: 3\n  mfa_grace_period: 60\nrules:\n- id: r001\n  conditions: []\n  decision: deny_access\n  priority: 1\n- id: r002\n  conditions:\n  - user_role ="
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0006",
+    "domain": "escalation",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 14,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.56,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 65.0,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 1854
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  sla_low: 72\n  sla_medium: 24\n  sla_high: 8\n  sla_critical: 4\nrules:\n- id: r001\n  conditions: []\n  decision: escalate_manager\n  priority: 1\n- id: r002\n  conditions:\n  - ticket_age_hours "
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0007",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 15,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.402,
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.666,
+    "success": false,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 36.9,
+    "failure_breakdown": {
+      "stale_rule_retained": 668
+    },
+    "static_issues": [
+      "Rule 'chain_1_rule' overrides non-existent rule 'rule_13'",
+      "Rule 'chain_6_rule' overrides non-existent rule 'rule_2'"
+    ],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2236
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 10
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  standard_window: 30\n  extended_window: 90\n  max_refund_amount: 250\nrules:\n- id: r001\n  conditions: []\n  decision: request_documentation\n  priority: 1\n- id: r002\n  conditions:\n  - item_p"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 0.666,
+          "total_scenarios": 2000,
+          "matches": 1332,
+          "mismatches": 668,
+          "failure_breakdown": {
+            "stale_rule_retained": 668
+          },
+          "static_issues": [
+            "Rule 'chain_1_rule' overrides non-existent rule 'rule_13'",
+            "Rule 'chain_6_rule' overrides non-existent rule 'rule_2'"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0008",
+    "domain": "approval",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 16,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.344,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 33.0,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2158
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 8
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  auto_approve_limit: 250\n  manager_limit: 5000\n  director_limit: 25000\nrules:\n- id: r001\n  conditions: []\n  decision: auto_approve\n  priority: 1\n- id: r002\n  conditions:\n  - department i"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0009",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 12,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.546,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 53.2,
+    "failure_breakdown": {},
+    "static_issues": [
+      "Rule 'chain_1_rule' overrides non-existent rule 'rule_3'",
+      "Rule 'chain_5_rule' overrides non-existent rule 'rule_3'"
+    ],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 1882
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  new_account_threshold: 30\n  lockout_threshold: 3\n  mfa_grace_period: 60\nrules:\n- id: r001\n  conditions: []\n  decision: deny_access\n  priority: 1\n- id: r002\n  conditions:\n  - account_age"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": [
+            "Rule 'chain_1_rule' overrides non-existent rule 'rule_3'",
+            "Rule 'chain_5_rule' overrides non-existent rule 'rule_3'"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0010",
+    "domain": "escalation",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 13,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.638,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 72.4,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 1874
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 10
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  sla_low: 72\n  sla_medium: 48\n  sla_high: 8\n  sla_critical: 2\nrules:\n- id: r001\n  conditions: []\n  decision: no_action\n  priority: 1\n- id: r002\n  conditions:\n  - previous_escalations > {"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0011",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 14,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.724,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 85.0,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2090
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 8
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  standard_window: 60\n  extended_window: 90\n  max_refund_amount: 500\nrules:\n- id: r001\n  conditions: []\n  decision: deny_refund\n  priority: 1\n- id: r002\n  conditions:\n  - customer_tier =="
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0012",
+    "domain": "approval",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 15,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.496,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 84.3,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2400
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  auto_approve_limit: 250\n  manager_limit: 2500\n  director_limit: 25000\nrules:\n- id: r001\n  conditions: []\n  decision: deny\n  priority: 1\n- id: r002\n  conditions:\n  - department in ['sale"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0013",
+    "domain": "escalation",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 12,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.758,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 87.1,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 1665
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 8
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  sla_low: 48\n  sla_medium: 24\n  sla_high: 12\n  sla_critical: 4\nrules:\n- id: r001\n  conditions: []\n  decision: page_oncall\n  priority: 1\n- id: r002\n  conditions:\n  - customer_tier in ['fr"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0014",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 13,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.672,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 108.2,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2079
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  standard_window: 45\n  extended_window: 90\n  max_refund_amount: 1000\nrules:\n- id: r001\n  conditions: []\n  decision: escalate_to_manager\n  priority: 1\n- id: r002\n  conditions:\n  - custome"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0015",
+    "domain": "approval",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 14,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.474,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 173.6,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2047
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 10
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  auto_approve_limit: 500\n  manager_limit: 2500\n  director_limit: 25000\nrules:\n- id: r001\n  conditions: []\n  decision: manager_approval\n  priority: 1\n- id: r002\n  conditions:\n  - requeste"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0016",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 15,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.502,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 69.6,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2389
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 8
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  new_account_threshold: 7\n  lockout_threshold: 3\n  mfa_grace_period: 60\nrules:\n- id: r001\n  conditions: []\n  decision: require_mfa\n  priority: 1\n- id: r002\n  conditions:\n  - is_during_bu"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0017",
+    "domain": "escalation",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 16,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.682,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 87.8,
+    "failure_breakdown": {},
+    "static_issues": [
+      "Rule 'update_4_override' overrides non-existent rule 'rule_8'",
+      "Rule 'chain_5_rule' overrides non-existent rule 'rule_4'"
+    ],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2373
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  sla_low: 96\n  sla_medium: 24\n  sla_high: 12\n  sla_critical: 1\nrules:\n- id: r001\n  conditions: []\n  decision: escalate_l3\n  priority: 1\n- id: r002\n  conditions:\n  - customer_tier in ['st"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": [
+            "Rule 'update_4_override' overrides non-existent rule 'rule_8'",
+            "Rule 'chain_5_rule' overrides non-existent rule 'rule_4'"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0018",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 12,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.666,
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.573,
+    "success": false,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 92.3,
+    "failure_breakdown": {
+      "wrong_priority": 854
+    },
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 1726
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 10
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  standard_window: 30\n  extended_window: 90\n  max_refund_amount: 100\nrules:\n- id: r001\n  conditions: []\n  decision: approve_refund\n  priority: 1\n- id: r002\n  conditions:\n  - is_final_sale"
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 0.573,
+          "total_scenarios": 2000,
+          "matches": 1146,
+          "mismatches": 854,
+          "failure_breakdown": {
+            "wrong_priority": 854
+          },
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0019",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 14,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.284,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 153.8,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2292
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  new_account_threshold: 7\n  lockout_threshold: 3\n  mfa_grace_period: 30\nrules:\n- id: r001\n  conditions: []\n  decision: temporary_lock\n  priority: 1\n- id: r002\n  conditions:\n  - has_mfa ="
+        },
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 4,
+        "tool": "compile_check",
+        "args": {},
+        "result": {
+          "status": "ok"
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,1378 @@
+[
+  {
+    "task_id": "task_0000",
+    "domain": "approval",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 13,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.568,
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.9535,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 35.1,
+    "failure_breakdown": {
+      "wrong_decision": 93
+    },
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2476
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  auto_approve_limit: 100\n  manager_limit: 5000\n  director_limit: 10000\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: manager_"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 0.9535,
+          "total_scenarios": 2000,
+          "matches": 1907,
+          "mismatches": 93,
+          "failure_breakdown": {
+            "wrong_decision": 93
+          },
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0001",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 14,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.724,
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.9755,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 114.6,
+    "failure_breakdown": {
+      "stale_rule_retained": 49
+    },
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2790
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 10
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  new_account_threshold: 7\n  lockout_threshold: 3\n  mfa_grace_period: 30\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: grant_a"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 0.9755,
+          "total_scenarios": 2000,
+          "matches": 1951,
+          "mismatches": 49,
+          "failure_breakdown": {
+            "stale_rule_retained": 49
+          },
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0002",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 16,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.432,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 35.3,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 3497
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  standard_window: 14\n  extended_window: 90\n  max_refund_amount: 100\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: approve_ref"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0003",
+    "domain": "approval",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 12,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.896,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 100.2,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2406
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 10
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  auto_approve_limit: 500\n  manager_limit: 5000\n  director_limit: 50000\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: deny\n  p"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0004",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 13,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.202,
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.9755,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 116.2,
+    "failure_breakdown": {
+      "stale_rule_retained": 49
+    },
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2695
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 8
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  new_account_threshold: 30\n  lockout_threshold: 3\n  mfa_grace_period: 60\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: deny_a"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 0.9755,
+          "total_scenarios": 2000,
+          "matches": 1951,
+          "mismatches": 49,
+          "failure_breakdown": {
+            "stale_rule_retained": 49
+          },
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0005",
+    "domain": "escalation",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 14,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.91,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 203.2,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2509
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  sla_low: 72\n  sla_medium: 24\n  sla_high: 8\n  sla_critical: 4\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: escalate_manager\n"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0006",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 15,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.52,
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.5625,
+    "success": false,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 124.2,
+    "failure_breakdown": {
+      "stale_rule_retained": 875
+    },
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2992
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 10
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  standard_window: 30\n  extended_window: 90\n  max_refund_amount: 250\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: request_doc"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 0.5625,
+          "total_scenarios": 2000,
+          "matches": 1125,
+          "mismatches": 875,
+          "failure_breakdown": {
+            "stale_rule_retained": 875
+          },
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0007",
+    "domain": "approval",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 16,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.39,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 61.4,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2949
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 8
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  auto_approve_limit: 250\n  manager_limit: 5000\n  director_limit: 25000\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: auto_app"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0008",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 12,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.466,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 78.1,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2443
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  new_account_threshold: 30\n  lockout_threshold: 3\n  mfa_grace_period: 60\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: deny_a"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0009",
+    "domain": "escalation",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 13,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.75,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 203.2,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2479
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 10
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  sla_low: 72\n  sla_medium: 36\n  sla_high: 8\n  sla_critical: 2\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: escalate_l3\n  pri"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0010",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 14,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.724,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 103.3,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2794
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 8
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  standard_window: 60\n  extended_window: 90\n  max_refund_amount: 500\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: deny_refund"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0011",
+    "domain": "approval",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 15,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.456,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 110.2,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 3146
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  auto_approve_limit: 250\n  manager_limit: 2500\n  director_limit: 25000\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: deny\n  p"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0012",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 16,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.202,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 69.4,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 3244
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 10
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  new_account_threshold: 30\n  lockout_threshold: 10\n  mfa_grace_period: 90\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: requi"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0013",
+    "domain": "escalation",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 12,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.31,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 111.1,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2208
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 8
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  sla_low: 48\n  sla_medium: 24\n  sla_high: 12\n  sla_critical: 4\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: page_oncall\n  pr"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0014",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 13,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.684,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 275.6,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2727
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  standard_window: 45\n  extended_window: 90\n  max_refund_amount: 1000\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: escalate_t"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0015",
+    "domain": "approval",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 14,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.396,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 88.3,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2788
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 10
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  auto_approve_limit: 500\n  manager_limit: 2500\n  director_limit: 10000\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: deny\n  p"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0016",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 15,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.502,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 63.4,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 3106
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 8
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  new_account_threshold: 7\n  lockout_threshold: 3\n  mfa_grace_period: 60\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: require"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0017",
+    "domain": "escalation",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 16,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.664,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 93.7,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 3151
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  sla_low: 96\n  sla_medium: 24\n  sla_high: 12\n  sla_critical: 1\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: escalate_l3\n  pr"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0018",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 12,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.69,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 70.2,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2333
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 10
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  standard_window: 30\n  extended_window: 90\n  max_refund_amount: 100\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: approve_ref"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "task_0019",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 14,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.26,
+    "model": "claude-sonnet-4-6",
+    "final_score": 1.0,
+    "success": true,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 71.2,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 5,
+    "trajectory": [
+      {
+        "step": 1,
+        "tool": "read_policy",
+        "args": {},
+        "result": {
+          "length": 2967
+        }
+      },
+      {
+        "step": 2,
+        "tool": "read_updates",
+        "args": {},
+        "result": {
+          "n_updates": 9
+        }
+      },
+      {
+        "step": 3,
+        "tool": "edit_policy",
+        "args": {
+          "policy_preview": "definitions:\n  new_account_threshold: 7\n  lockout_threshold: 3\n  mfa_grace_period: 30\nrules:\n- id: default_action\n  description: the default fallback handling rule\n  conditions: []\n  decision: tempora"
+        },
+        "result": {
+          "status": "ok",
+          "message": "Policy updated and compiles successfully."
+        }
+      },
+      {
+        "step": 4,
+        "tool": "check_references",
+        "args": {},
+        "result": {
+          "status": "ok",
+          "issues": []
+        }
+      },
+      {
+        "step": 5,
+        "tool": "submit",
+        "args": {},
+        "result": {
+          "status": "submitted",
+          "final_score": 1.0,
+          "total_scenarios": 2000,
+          "matches": 2000,
+          "mismatches": 0,
+          "failure_breakdown": {},
+          "static_issues": []
+        }
+      }
+    ]
+  }
+]

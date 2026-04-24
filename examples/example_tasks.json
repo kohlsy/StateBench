@@ -1,0 +1,994 @@
+[
+  {
+    "example_id": "ex_007",
+    "domain": "refund",
+    "difficulty": "easy",
+    "n_rules_initial": 4,
+    "n_updates": 2,
+    "seed": 7,
+    "story": "A single definition change shifts the refund window; a new rule adds high-value escalation. No interaction \u2014 each update is self-contained.",
+    "dominant_interaction_pattern": "sequential local edits",
+    "behavioral_diff_pct": 52.8,
+    "failure_breakdown_initial_vs_gold": {
+      "wrong_priority": 502,
+      "wrong_decision": 26
+    },
+    "initial_policy": "definitions:\n  standard_window: 45\n  extended_window: 60\n  max_refund_amount: 1000\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: offer_store_credit\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - purchase_age_days > {standard_window}\n  - purchase_channel == 'in_store'\n  - is_final_sale == False\n  decision: approve_refund\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - purchase_age_days < 16\n  decision: deny_refund\n  priority: 3\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - purchase_age_days < {standard_window}\n  - is_final_sale == True\n  - customer_tier == 'silver'\n  decision: approve_refund\n  priority: 4\n",
+    "gold_policy": "definitions:\n  standard_window: 45\n  extended_window: 60\n  max_refund_amount: 1000\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: offer_store_credit\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - purchase_age_days > {standard_window}\n  - purchase_channel == 'in_store'\n  - is_final_sale == False\n  decision: escalate_to_manager\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - purchase_age_days < 16\n  decision: deny_refund\n  priority: 3\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - purchase_age_days < {standard_window}\n  - is_final_sale == True\n  - customer_tier == 'silver'\n  decision: approve_refund\n  priority: 4\n- id: update_1_new_rule\n  description: Added by update 1\n  conditions:\n  - item_condition in ['opened']\n  decision: approve_refund\n  priority: 5\n",
+    "initial_definitions": {
+      "standard_window": 45,
+      "extended_window": 60,
+      "max_refund_amount": 1000
+    },
+    "initial_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3"
+    ],
+    "gold_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "update_1_new_rule"
+    ],
+    "rules_added_by_updates": [
+      "update_1_new_rule"
+    ],
+    "rules_removed_by_updates": [],
+    "update_stream": [
+      {
+        "type": "add_rule",
+        "description": "Add new rule: update_1_new_rule",
+        "rule_id": "update_1_new_rule",
+        "conditions": [
+          "item_condition in ['opened']"
+        ],
+        "decision": "approve_refund",
+        "overrides": []
+      },
+      {
+        "type": "change_decision",
+        "description": "Change decision of 'rule_1' from approve_refund to escalate_to_manager",
+        "rule_id": "rule_1",
+        "old_decision": "approve_refund",
+        "new_decision": "escalate_to_manager"
+      }
+    ],
+    "interacting_update_pairs": [],
+    "counterexample_of_initial": {
+      "scenario": {
+        "purchase_age_days": 136,
+        "purchase_channel": "in_store",
+        "is_final_sale": true,
+        "customer_tier": "silver",
+        "item_condition": "opened"
+      },
+      "expected_decision": "approve_refund",
+      "expected_rule": "update_1_new_rule",
+      "actual_decision": "offer_store_credit",
+      "actual_rule": "default_action"
+    }
+  },
+  {
+    "example_id": "ex_040",
+    "domain": "approval",
+    "difficulty": "easy",
+    "n_rules_initial": 4,
+    "n_updates": 3,
+    "seed": 40,
+    "story": "A rule is revoked and another's decision flips. The tricky part: revoking the rule lets a lower-priority fallback take over cases that were previously handled.",
+    "dominant_interaction_pattern": "priority inversion, scope exposure",
+    "behavioral_diff_pct": 33.8,
+    "failure_breakdown_initial_vs_gold": {
+      "wrong_decision": 338
+    },
+    "initial_policy": "definitions:\n  auto_approve_limit: 250\n  manager_limit: 5000\n  director_limit: 50000\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: deny\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - department == 'sales'\n  decision: manager_approval\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - requester_level in ['intern', 'ic']\n  - expense_type in ['travel', 'software', 'hardware', 'consulting']\n  decision: auto_approve\n  priority: 3\n  overrides:\n  - rule_1\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - is_recurring == False\n  - is_budgeted == True\n  - amount <= 20694\n  decision: manager_approval\n  priority: 4\n",
+    "gold_policy": "definitions:\n  auto_approve_limit: 250\n  manager_limit: 5000\n  director_limit: 50000\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: deny\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - department == 'sales'\n  decision: manager_approval\n  priority: 3\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - requester_level in ['intern', 'ic']\n  - expense_type in ['travel', 'software', 'hardware', 'consulting']\n  decision: auto_approve\n  priority: 2\n  overrides:\n  - rule_1\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - is_recurring == False\n  - is_budgeted == True\n  - amount <= 20694\n  - requester_level in ['intern', 'manager', 'director']\n  decision: manager_approval\n  priority: 4\n",
+    "initial_definitions": {
+      "auto_approve_limit": 250,
+      "manager_limit": 5000,
+      "director_limit": 50000
+    },
+    "initial_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3"
+    ],
+    "gold_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3"
+    ],
+    "rules_added_by_updates": [],
+    "rules_removed_by_updates": [],
+    "update_stream": [
+      {
+        "type": "narrow_scope",
+        "description": "Narrow scope of 'rule_3': add condition 'requester_level in ['intern', 'manager', 'director']'",
+        "rule_id": "rule_3",
+        "added_condition": "requester_level in ['intern', 'manager', 'director']"
+      },
+      {
+        "type": "change_priority",
+        "description": "Swap priorities: 'rule_2' (pri 3) <-> 'rule_1' (pri 2)",
+        "rule_id_1": "rule_2",
+        "rule_id_2": "rule_1"
+      }
+    ],
+    "interacting_update_pairs": [],
+    "counterexample_of_initial": {
+      "scenario": {
+        "department": "sales",
+        "requester_level": "ic",
+        "expense_type": "consulting",
+        "is_recurring": false,
+        "is_budgeted": false,
+        "amount": 32914
+      },
+      "expected_decision": "manager_approval",
+      "expected_rule": "rule_1",
+      "actual_decision": "auto_approve",
+      "actual_rule": "rule_2"
+    }
+  },
+  {
+    "example_id": "ex_025",
+    "domain": "access_control",
+    "difficulty": "medium",
+    "n_rules_initial": 6,
+    "n_updates": 4,
+    "seed": 25,
+    "story": "A priority swap between two broadly-matching rules flips the winner for a large slice of scenarios. The swap looks like a minor bookkeeping change but has global behavioral consequences.",
+    "dominant_interaction_pattern": "scope exposure",
+    "behavioral_diff_pct": 40.6,
+    "failure_breakdown_initial_vs_gold": {
+      "wrong_priority": 387,
+      "stale_rule_retained": 19
+    },
+    "initial_policy": "definitions:\n  new_account_threshold: 14\n  lockout_threshold: 3\n  mfa_grace_period: 30\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: temporary_lock\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - failed_login_count < {lockout_threshold}\n  - has_mfa == False\n  decision: temporary_lock\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - user_role in ['editor', 'admin', 'superadmin']\n  - account_age_days <= 93\n  decision: temporary_lock\n  priority: 3\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - failed_login_count <= 10\n  decision: require_approval\n  priority: 4\n  overrides:\n  - rule_2\n- id: rule_4\n  description: Auto-generated rule 4\n  conditions:\n  - user_role == 'viewer'\n  decision: temporary_lock\n  priority: 5\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - user_role == 'editor'\n  - account_age_days >= 287\n  - resource_sensitivity == 'restricted'\n  decision: temporary_lock\n  priority: 6\n",
+    "gold_policy": "definitions:\n  new_account_threshold: 14\n  lockout_threshold: 3\n  mfa_grace_period: 30\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: temporary_lock\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - failed_login_count < {lockout_threshold}\n  - has_mfa == False\n  decision: temporary_lock\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - user_role in ['editor', 'admin', 'superadmin']\n  - account_age_days <= 93\n  decision: temporary_lock\n  priority: 3\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - failed_login_count <= 10\n  decision: require_approval\n  priority: 4\n  overrides:\n  - rule_2\n- id: rule_4\n  description: Auto-generated rule 4\n  conditions:\n  - user_role == 'viewer'\n  - failed_login_count > {lockout_threshold}\n  decision: temporary_lock\n  priority: 5\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - user_role == 'editor'\n  - account_age_days >= 287\n  - resource_sensitivity == 'restricted'\n  decision: temporary_lock\n  priority: 6\n- id: update_4_override\n  description: Override of rule_3\n  conditions:\n  - account_age_days <= 289\n  decision: grant_access\n  priority: 7\n  overrides:\n  - rule_3\n",
+    "initial_definitions": {
+      "new_account_threshold": 14,
+      "lockout_threshold": 3,
+      "mfa_grace_period": 30
+    },
+    "initial_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_4",
+      "rule_5"
+    ],
+    "gold_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_4",
+      "rule_5",
+      "update_4_override"
+    ],
+    "rules_added_by_updates": [
+      "update_4_override"
+    ],
+    "rules_removed_by_updates": [],
+    "update_stream": [
+      {
+        "type": "narrow_scope",
+        "description": "Narrow scope of 'rule_1': add condition 'user_role == 'editor''",
+        "rule_id": "rule_1",
+        "added_condition": "user_role == 'editor'"
+      },
+      {
+        "type": "narrow_scope",
+        "description": "Narrow scope of 'rule_4': add condition 'failed_login_count > {lockout_threshold}'",
+        "rule_id": "rule_4",
+        "added_condition": "failed_login_count > {lockout_threshold}"
+      },
+      {
+        "type": "widen_scope",
+        "description": "Widen scope of 'rule_1': remove condition 'user_role == 'editor''",
+        "rule_id": "rule_1",
+        "removed_condition": "user_role == 'editor'"
+      },
+      {
+        "type": "override_existing",
+        "description": "Add override rule 'update_4_override' that overrides 'rule_3'",
+        "rule_id": "update_4_override",
+        "overrides": [
+          "rule_3"
+        ],
+        "conditions": [
+          "account_age_days <= 289"
+        ],
+        "decision": "grant_access"
+      }
+    ],
+    "interacting_update_pairs": [],
+    "counterexample_of_initial": {
+      "scenario": {
+        "failed_login_count": 21,
+        "has_mfa": false,
+        "user_role": "superadmin",
+        "account_age_days": 28,
+        "resource_sensitivity": "restricted"
+      },
+      "expected_decision": "grant_access",
+      "expected_rule": "update_4_override",
+      "actual_decision": "temporary_lock",
+      "actual_rule": "rule_2"
+    }
+  },
+  {
+    "example_id": "ex_031",
+    "domain": "escalation",
+    "difficulty": "medium",
+    "n_rules_initial": 6,
+    "n_updates": 4,
+    "seed": 31,
+    "story": "An exception is carved out of a rule that already overrides another. Agents must track both the override relationship and the new exception without conflating them.",
+    "dominant_interaction_pattern": "priority inversion, revoke-exposes-fallback",
+    "behavioral_diff_pct": 31.4,
+    "failure_breakdown_initial_vs_gold": {
+      "wrong_decision": 274,
+      "wrong_priority": 10,
+      "stale_rule_retained": 30
+    },
+    "initial_policy": "definitions:\n  sla_low: 48\n  sla_medium: 36\n  sla_high: 4\n  sla_critical: 2\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: page_oncall\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - is_security_related == True\n  decision: escalate_l2\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - previous_escalations > {sla_high}\n  decision: no_action\n  priority: 3\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - customer_tier in ['enterprise', 'free']\n  decision: page_oncall\n  priority: 4\n  overrides:\n  - rule_2\n- id: rule_4\n  description: Auto-generated rule 4\n  conditions:\n  - customer_tier == 'pro'\n  - is_security_related == True\n  decision: escalate_l2\n  priority: 5\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - previous_escalations > {sla_high}\n  - is_security_related == False\n  decision: escalate_l2\n  priority: 6\n  overrides:\n  - rule_1\n  - rule_4\n",
+    "gold_policy": "definitions:\n  sla_low: 48\n  sla_medium: 36\n  sla_high: 4\n  sla_critical: 2\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: page_oncall\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - is_security_related == True\n  decision: no_action\n  priority: 4\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - previous_escalations > {sla_high}\n  decision: no_action\n  priority: 3\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - customer_tier in ['enterprise', 'free']\n  decision: page_oncall\n  priority: 6\n  overrides:\n  - rule_2\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - previous_escalations > {sla_high}\n  - is_security_related == False\n  decision: escalate_l2\n  priority: 2\n  overrides:\n  - rule_1\n  - rule_4\n",
+    "initial_definitions": {
+      "sla_low": 48,
+      "sla_medium": 36,
+      "sla_high": 4,
+      "sla_critical": 2
+    },
+    "initial_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_4",
+      "rule_5"
+    ],
+    "gold_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_5"
+    ],
+    "rules_added_by_updates": [],
+    "rules_removed_by_updates": [
+      "rule_4"
+    ],
+    "update_stream": [
+      {
+        "type": "change_decision",
+        "description": "Change decision of 'rule_1' from escalate_l2 to no_action",
+        "rule_id": "rule_1",
+        "old_decision": "escalate_l2",
+        "new_decision": "no_action"
+      },
+      {
+        "type": "change_priority",
+        "description": "Swap priorities: 'rule_3' (pri 4) <-> 'rule_1' (pri 2)",
+        "rule_id_1": "rule_3",
+        "rule_id_2": "rule_1"
+      },
+      {
+        "type": "change_priority",
+        "description": "Swap priorities: 'rule_3' (pri 2) <-> 'rule_5' (pri 6)",
+        "rule_id_1": "rule_3",
+        "rule_id_2": "rule_5"
+      },
+      {
+        "type": "revoke_rule",
+        "description": "Revoke rule: rule_4",
+        "rule_id": "rule_4"
+      }
+    ],
+    "interacting_update_pairs": [],
+    "counterexample_of_initial": {
+      "scenario": {
+        "is_security_related": false,
+        "previous_escalations": 11,
+        "customer_tier": "free"
+      },
+      "expected_decision": "page_oncall",
+      "expected_rule": "rule_3",
+      "actual_decision": "escalate_l2",
+      "actual_rule": "rule_5"
+    }
+  },
+  {
+    "example_id": "ex_044",
+    "domain": "refund",
+    "difficulty": "medium",
+    "n_rules_initial": 6,
+    "n_updates": 5,
+    "seed": 44,
+    "story": "Changing 'standard_window' from 30 to 45 silently expands the applicability of every rule that references it. Agents that edit rules one-by-one often miss that the definition already did the work \u2014 or double-apply it.",
+    "dominant_interaction_pattern": "priority inversion, override/exception chain, scope exposure",
+    "behavioral_diff_pct": 31.0,
+    "failure_breakdown_initial_vs_gold": {
+      "wrong_priority": 310
+    },
+    "initial_policy": "definitions:\n  standard_window: 60\n  extended_window: 120\n  max_refund_amount: 100\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: offer_store_credit\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - customer_tier == 'bronze'\n  decision: deny_refund\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - is_final_sale == True\n  decision: approve_refund\n  priority: 3\n  overrides:\n  - rule_1\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - customer_tier == 'gold'\n  - item_condition in ['unopened']\n  - is_final_sale == True\n  decision: escalate_to_manager\n  priority: 4\n- id: rule_4\n  description: Auto-generated rule 4\n  conditions:\n  - purchase_channel in ['online', 'in_store']\n  decision: offer_store_credit\n  priority: 5\n  overrides:\n  - rule_1\n  - rule_3\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - item_condition in ['unopened']\n  decision: offer_store_credit\n  priority: 6\n",
+    "gold_policy": "definitions:\n  standard_window: 60\n  extended_window: 120\n  max_refund_amount: 100\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: offer_store_credit\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - customer_tier == 'bronze'\n  decision: approve_refund\n  priority: 7\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - is_final_sale == True\n  decision: approve_refund\n  priority: 3\n  overrides:\n  - rule_1\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - customer_tier == 'gold'\n  - item_condition in ['unopened']\n  - is_final_sale == True\n  - customer_tier in ['bronze', 'platinum']\n  decision: escalate_to_manager\n  priority: 4\n- id: rule_4\n  description: Auto-generated rule 4\n  conditions:\n  - purchase_channel in ['online', 'in_store']\n  decision: offer_store_credit\n  priority: 5\n  overrides:\n  - rule_1\n  - rule_3\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - item_condition in ['unopened']\n  decision: offer_store_credit\n  priority: 6\n- id: update_2_exception\n  description: Exception to rule_2\n  conditions:\n  - is_final_sale == True\n  - is_final_sale == True\n  decision: escalate_to_manager\n  priority: 2\n  overrides:\n  - rule_2\n- id: update_5_exception\n  description: Exception to rule_3\n  conditions:\n  - customer_tier == 'gold'\n  - item_condition in ['unopened']\n  - is_final_sale == True\n  - customer_tier in ['bronze', 'platinum']\n  - customer_tier in ['gold']\n  decision: offer_store_credit\n  priority: 8\n  overrides:\n  - rule_3\n",
+    "initial_definitions": {
+      "standard_window": 60,
+      "extended_window": 120,
+      "max_refund_amount": 100
+    },
+    "initial_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_4",
+      "rule_5"
+    ],
+    "gold_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_4",
+      "rule_5",
+      "update_2_exception",
+      "update_5_exception"
+    ],
+    "rules_added_by_updates": [
+      "update_2_exception",
+      "update_5_exception"
+    ],
+    "rules_removed_by_updates": [],
+    "update_stream": [
+      {
+        "type": "narrow_scope",
+        "description": "Narrow scope of 'rule_3': add condition 'customer_tier in ['bronze', 'platinum']'",
+        "rule_id": "rule_3",
+        "added_condition": "customer_tier in ['bronze', 'platinum']"
+      },
+      {
+        "type": "add_exception",
+        "description": "Add exception to 'rule_2': when 'is_final_sale == True', decision becomes 'escalate_to_manager'",
+        "rule_id": "update_2_exception",
+        "exception_to": "rule_2",
+        "conditions": [
+          "is_final_sale == True",
+          "is_final_sale == True"
+        ],
+        "decision": "escalate_to_manager"
+      },
+      {
+        "type": "change_decision",
+        "description": "Change decision of 'rule_1' from deny_refund to approve_refund",
+        "rule_id": "rule_1",
+        "old_decision": "deny_refund",
+        "new_decision": "approve_refund"
+      },
+      {
+        "type": "change_priority",
+        "description": "Swap priorities: 'rule_1' (pri 2) <-> 'update_2_exception' (pri 7)",
+        "rule_id_1": "rule_1",
+        "rule_id_2": "update_2_exception"
+      },
+      {
+        "type": "add_exception",
+        "description": "Add exception to 'rule_3': when 'customer_tier in ['gold']', decision becomes 'offer_store_credit'",
+        "rule_id": "update_5_exception",
+        "exception_to": "rule_3",
+        "conditions": [
+          "customer_tier == 'gold'",
+          "item_condition in ['unopened']",
+          "is_final_sale == True",
+          "customer_tier in ['bronze', 'platinum']",
+          "customer_tier in ['gold']"
+        ],
+        "decision": "offer_store_credit"
+      }
+    ],
+    "interacting_update_pairs": [
+      "Update 4 (change_priority) \u2192 Update 5 (add_exception): priority reordering changes which rule the override/exception applies to"
+    ],
+    "counterexample_of_initial": {
+      "scenario": {
+        "customer_tier": "bronze",
+        "is_final_sale": true,
+        "item_condition": "unopened",
+        "purchase_channel": "in_store"
+      },
+      "expected_decision": "approve_refund",
+      "expected_rule": "rule_1",
+      "actual_decision": "offer_store_credit",
+      "actual_rule": "rule_5"
+    }
+  },
+  {
+    "example_id": "ex_055",
+    "domain": "approval",
+    "difficulty": "hard",
+    "n_rules_initial": 8,
+    "n_updates": 5,
+    "seed": 55,
+    "story": "Narrowing a rule's scope removes it from some scenarios, making a previously-shadowed lower-priority rule the winner there. An exception is then added to that exposed rule. Two-step interactions are easy to miss.",
+    "dominant_interaction_pattern": "scope exposure, revoke-exposes-fallback",
+    "behavioral_diff_pct": 75.1,
+    "failure_breakdown_initial_vs_gold": {
+      "wrong_priority": 708,
+      "wrong_decision": 43
+    },
+    "initial_policy": "definitions:\n  auto_approve_limit: 100\n  manager_limit: 1000\n  director_limit: 10000\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: deny\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - requester_level == 'manager'\n  - amount >= 43426\n  - department in ['legal', 'ops', 'sales', 'marketing']\n  decision: deny\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - amount < 33618\n  - requester_level in ['intern', 'director']\n  - is_recurring == True\n  decision: auto_approve\n  priority: 3\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - expense_type in ['software', 'hardware', 'training', 'travel']\n  - department == 'ops'\n  - is_budgeted == False\n  decision: director_approval\n  priority: 4\n  overrides:\n  - rule_1\n- id: rule_4\n  description: Auto-generated rule 4\n  conditions:\n  - department == 'legal'\n  - is_recurring == True\n  decision: vp_approval\n  priority: 5\n  overrides:\n  - rule_3\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - expense_type == 'travel'\n  - is_recurring == False\n  - amount <= {director_limit}\n  decision: director_approval\n  priority: 6\n  overrides:\n  - rule_1\n- id: rule_6\n  description: Auto-generated rule 6\n  conditions:\n  - expense_type == 'consulting'\n  - is_recurring == False\n  - is_budgeted == False\n  decision: auto_approve\n  priority: 7\n  overrides:\n  - rule_5\n  - rule_4\n- id: rule_7\n  description: Auto-generated rule 7\n  conditions:\n  - is_budgeted == False\n  - department == 'sales'\n  decision: director_approval\n  priority: 8\n",
+    "gold_policy": "definitions:\n  auto_approve_limit: 100\n  manager_limit: 1000\n  director_limit: 10000\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: deny\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - requester_level == 'manager'\n  - amount >= 43426\n  - department in ['legal', 'ops', 'sales', 'marketing']\n  decision: deny\n  priority: 2\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - expense_type in ['software', 'hardware', 'training', 'travel']\n  - department == 'ops'\n  - is_budgeted == False\n  decision: deny\n  priority: 4\n  overrides:\n  - rule_1\n- id: rule_4\n  description: Auto-generated rule 4\n  conditions:\n  - department == 'legal'\n  - is_recurring == True\n  decision: vp_approval\n  priority: 5\n  overrides:\n  - rule_3\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - expense_type == 'travel'\n  - is_recurring == False\n  - amount <= {director_limit}\n  decision: director_approval\n  priority: 6\n  overrides:\n  - rule_1\n- id: rule_6\n  description: Auto-generated rule 6\n  conditions:\n  - expense_type == 'consulting'\n  - is_recurring == False\n  - is_budgeted == False\n  decision: auto_approve\n  priority: 7\n  overrides:\n  - rule_5\n  - rule_4\n- id: rule_7\n  description: Auto-generated rule 7\n  conditions:\n  - is_budgeted == False\n  decision: manager_approval\n  priority: 8\n- id: update_1_override\n  description: Override of rule_1\n  conditions:\n  - requester_level in ['director', 'vp']\n  decision: vp_approval\n  priority: 9\n  overrides:\n  - rule_1\n",
+    "initial_definitions": {
+      "auto_approve_limit": 100,
+      "manager_limit": 1000,
+      "director_limit": 10000
+    },
+    "initial_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_4",
+      "rule_5",
+      "rule_6",
+      "rule_7"
+    ],
+    "gold_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_3",
+      "rule_4",
+      "rule_5",
+      "rule_6",
+      "rule_7",
+      "update_1_override"
+    ],
+    "rules_added_by_updates": [
+      "update_1_override"
+    ],
+    "rules_removed_by_updates": [
+      "rule_2"
+    ],
+    "update_stream": [
+      {
+        "type": "override_existing",
+        "description": "Add override rule 'update_1_override' that overrides 'rule_1'",
+        "rule_id": "update_1_override",
+        "overrides": [
+          "rule_1"
+        ],
+        "conditions": [
+          "requester_level in ['director', 'vp']"
+        ],
+        "decision": "vp_approval"
+      },
+      {
+        "type": "revoke_rule",
+        "description": "Revoke rule: rule_2",
+        "rule_id": "rule_2"
+      },
+      {
+        "type": "widen_scope",
+        "description": "Widen scope of 'rule_7': remove condition 'department == 'sales''",
+        "rule_id": "rule_7",
+        "removed_condition": "department == 'sales'"
+      },
+      {
+        "type": "change_decision",
+        "description": "Change decision of 'rule_7' from director_approval to manager_approval",
+        "rule_id": "rule_7",
+        "old_decision": "director_approval",
+        "new_decision": "manager_approval"
+      },
+      {
+        "type": "change_decision",
+        "description": "Change decision of 'rule_3' from director_approval to deny",
+        "rule_id": "rule_3",
+        "old_decision": "director_approval",
+        "new_decision": "deny"
+      }
+    ],
+    "interacting_update_pairs": [
+      "Update 2 (revoke) \u2192 Update 3 (widen_scope): revoking exposes new winners that the later change then modifies"
+    ],
+    "counterexample_of_initial": {
+      "scenario": {
+        "requester_level": "unknown_value",
+        "amount": 116859,
+        "department": "ops",
+        "expense_type": "consulting",
+        "is_budgeted": false,
+        "is_recurring": false
+      },
+      "expected_decision": "manager_approval",
+      "expected_rule": "rule_7",
+      "actual_decision": "auto_approve",
+      "actual_rule": "rule_6"
+    }
+  },
+  {
+    "example_id": "ex_063",
+    "domain": "access_control",
+    "difficulty": "hard",
+    "n_rules_initial": 8,
+    "n_updates": 6,
+    "seed": 63,
+    "story": "Three sequential override operations build a chain: A overrides B, then C overrides A, then B is revoked. Agents must reason about transitive precedence after each step, not just apply updates in isolation.",
+    "dominant_interaction_pattern": "definition propagation, priority inversion, scope exposure, revoke-exposes-fallback",
+    "behavioral_diff_pct": 21.2,
+    "failure_breakdown_initial_vs_gold": {
+      "wrong_decision": 96,
+      "wrong_priority": 116
+    },
+    "initial_policy": "definitions:\n  new_account_threshold: 14\n  lockout_threshold: 5\n  mfa_grace_period: 60\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: temporary_lock\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - has_mfa == False\n  - user_role in ['editor']\n  decision: require_mfa\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - failed_login_count > {new_account_threshold}\n  decision: deny_access\n  priority: 3\n  overrides:\n  - rule_1\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - account_age_days >= 117\n  decision: require_approval\n  priority: 4\n- id: rule_4\n  description: Auto-generated rule 4\n  conditions:\n  - failed_login_count < {new_account_threshold}\n  - resource_sensitivity in ['confidential', 'public', 'restricted']\n  decision: temporary_lock\n  priority: 5\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - account_age_days >= {lockout_threshold}\n  decision: grant_access\n  priority: 6\n  overrides:\n  - rule_1\n  - rule_2\n- id: rule_6\n  description: Auto-generated rule 6\n  conditions:\n  - user_role in ['viewer', 'superadmin', 'admin']\n  - is_during_business_hours == False\n  decision: require_approval\n  priority: 7\n  overrides:\n  - rule_3\n- id: rule_7\n  description: Auto-generated rule 7\n  conditions:\n  - has_mfa == False\n  decision: temporary_lock\n  priority: 8\n  overrides:\n  - rule_1\n  - rule_4\n",
+    "gold_policy": "definitions:\n  new_account_threshold: 14\n  lockout_threshold: 5\n  mfa_grace_period: 60\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: temporary_lock\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - has_mfa == False\n  - user_role in ['editor']\n  decision: require_mfa\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - failed_login_count > {new_account_threshold}\n  - failed_login_count > 7\n  decision: deny_access\n  priority: 3\n  overrides:\n  - rule_1\n- id: rule_4\n  description: Auto-generated rule 4\n  conditions:\n  - failed_login_count < {new_account_threshold}\n  - resource_sensitivity in ['confidential', 'public', 'restricted']\n  decision: temporary_lock\n  priority: 4\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - account_age_days >= {lockout_threshold}\n  decision: grant_access\n  priority: 7\n  overrides:\n  - rule_1\n  - rule_2\n- id: rule_6\n  description: Auto-generated rule 6\n  conditions:\n  - user_role in ['viewer', 'superadmin', 'admin']\n  - is_during_business_hours == False\n  decision: require_approval\n  priority: 6\n  overrides:\n  - rule_3\n- id: rule_7\n  description: Auto-generated rule 7\n  conditions:\n  - has_mfa == False\n  decision: temporary_lock\n  priority: 8\n  overrides:\n  - rule_1\n  - rule_4\n- id: update_4_override\n  description: Override of rule_6\n  conditions:\n  - failed_login_count < 1\n  decision: deny_access\n  priority: 9\n  overrides:\n  - rule_6\n",
+    "initial_definitions": {
+      "new_account_threshold": 14,
+      "lockout_threshold": 5,
+      "mfa_grace_period": 60
+    },
+    "initial_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_4",
+      "rule_5",
+      "rule_6",
+      "rule_7"
+    ],
+    "gold_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_4",
+      "rule_5",
+      "rule_6",
+      "rule_7",
+      "update_4_override"
+    ],
+    "rules_added_by_updates": [
+      "update_4_override"
+    ],
+    "rules_removed_by_updates": [
+      "rule_3"
+    ],
+    "update_stream": [
+      {
+        "type": "narrow_scope",
+        "description": "Narrow scope of 'rule_2': add condition 'failed_login_count > 7'",
+        "rule_id": "rule_2",
+        "added_condition": "failed_login_count > 7"
+      },
+      {
+        "type": "change_priority",
+        "description": "Swap priorities: 'rule_4' (pri 5) <-> 'rule_3' (pri 4)",
+        "rule_id_1": "rule_4",
+        "rule_id_2": "rule_3"
+      },
+      {
+        "type": "revoke_rule",
+        "description": "Revoke rule: rule_3",
+        "rule_id": "rule_3"
+      },
+      {
+        "type": "override_existing",
+        "description": "Add override rule 'update_4_override' that overrides 'rule_6'",
+        "rule_id": "update_4_override",
+        "overrides": [
+          "rule_6"
+        ],
+        "conditions": [
+          "failed_login_count < 1"
+        ],
+        "decision": "deny_access"
+      },
+      {
+        "type": "change_definition",
+        "description": "Change definition 'lockout_threshold' from 5 to 5",
+        "key": "lockout_threshold",
+        "old_value": 5,
+        "new_value": 5
+      },
+      {
+        "type": "change_priority",
+        "description": "Swap priorities: 'rule_6' (pri 7) <-> 'rule_5' (pri 6)",
+        "rule_id_1": "rule_6",
+        "rule_id_2": "rule_5"
+      }
+    ],
+    "interacting_update_pairs": [
+      "Update 5 (change_definition) \u2192 Update 1 (narrow_scope): the definition change propagates into the scope/exception modification",
+      "Update 3 (revoke) \u2192 Update 4 (override_existing): revoking exposes new winners that the later change then modifies",
+      "Update 2 (change_priority) \u2192 Update 4 (override_existing): priority reordering changes which rule the override/exception applies to"
+    ],
+    "counterexample_of_initial": {
+      "scenario": {
+        "has_mfa": false,
+        "user_role": "viewer",
+        "failed_login_count": 0,
+        "resource_sensitivity": "public",
+        "account_age_days": 0,
+        "is_during_business_hours": true
+      },
+      "expected_decision": "deny_access",
+      "expected_rule": "update_4_override",
+      "actual_decision": "temporary_lock",
+      "actual_rule": "rule_7"
+    }
+  },
+  {
+    "example_id": "ex_071",
+    "domain": "escalation",
+    "difficulty": "hard",
+    "n_rules_initial": 8,
+    "n_updates": 6,
+    "seed": 71,
+    "story": "A rule is revoked, then a surviving sibling rule is widened to cover more cases. The widening interacts with the now-absent rule: scenarios that used to hit the revoked rule now fall through to the widened sibling with a different decision.",
+    "dominant_interaction_pattern": "sequential local edits",
+    "behavioral_diff_pct": 49.5,
+    "failure_breakdown_initial_vs_gold": {
+      "wrong_priority": 495
+    },
+    "initial_policy": "definitions:\n  sla_low: 72\n  sla_medium: 48\n  sla_high: 12\n  sla_critical: 1\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: page_oncall\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - customer_tier == 'starter'\n  - is_security_related == True\n  decision: page_oncall\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - previous_escalations >= {sla_critical}\n  decision: escalate_l2\n  priority: 3\n  overrides:\n  - rule_1\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - previous_escalations > {sla_critical}\n  - ticket_age_hours >= {sla_critical}\n  decision: no_action\n  priority: 4\n- id: rule_4\n  description: Auto-generated rule 4\n  conditions:\n  - ticket_age_hours <= {sla_high}\n  - customer_tier in ['pro', 'free']\n  - previous_escalations < {sla_critical}\n  decision: escalate_l2\n  priority: 5\n  overrides:\n  - rule_2\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - is_revenue_impacting == False\n  - previous_escalations > {sla_critical}\n  decision: escalate_l3\n  priority: 6\n- id: rule_6\n  description: Auto-generated rule 6\n  conditions:\n  - previous_escalations <= {sla_critical}\n  decision: no_action\n  priority: 7\n- id: rule_7\n  description: Auto-generated rule 7\n  conditions:\n  - previous_escalations < 1\n  - is_security_related == True\n  - severity == 'high'\n  decision: page_oncall\n  priority: 8\n",
+    "gold_policy": "definitions:\n  sla_low: 72\n  sla_medium: 48\n  sla_high: 12\n  sla_critical: 1\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: page_oncall\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - customer_tier == 'starter'\n  - is_security_related == True\n  decision: page_oncall\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - previous_escalations >= {sla_critical}\n  decision: escalate_l2\n  priority: 3\n  overrides:\n  - rule_1\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - previous_escalations > {sla_critical}\n  - ticket_age_hours >= {sla_critical}\n  decision: no_action\n  priority: 4\n- id: rule_4\n  description: Auto-generated rule 4\n  conditions:\n  - ticket_age_hours <= {sla_high}\n  - customer_tier in ['pro', 'free']\n  - previous_escalations < {sla_critical}\n  decision: escalate_l2\n  priority: 5\n  overrides:\n  - rule_2\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - is_revenue_impacting == False\n  - previous_escalations > {sla_critical}\n  decision: escalate_l3\n  priority: 6\n- id: rule_6\n  description: Auto-generated rule 6\n  conditions:\n  - previous_escalations <= {sla_critical}\n  decision: no_action\n  priority: 7\n- id: rule_7\n  description: Auto-generated rule 7\n  conditions:\n  - previous_escalations < 1\n  - is_security_related == True\n  - severity == 'high'\n  decision: page_oncall\n  priority: 8\n- id: update_1_override\n  description: Override of rule_4\n  conditions:\n  - is_revenue_impacting == True\n  decision: page_oncall\n  priority: 9\n  overrides:\n  - rule_4\n- id: update_2_new_rule\n  description: Added by update 2\n  conditions:\n  - ticket_age_hours <= {sla_high}\n  - customer_tier == 'free'\n  decision: escalate_manager\n  priority: 10\n  overrides:\n  - rule_6\n- id: update_3_new_rule\n  description: Added by update 3\n  conditions:\n  - customer_tier == 'free'\n  - severity == 'medium'\n  decision: no_action\n  priority: 11\n- id: update_4_new_rule\n  description: Added by update 4\n  conditions:\n  - ticket_age_hours <= {sla_critical}\n  decision: escalate_l3\n  priority: 12\n  overrides:\n  - update_2_new_rule\n",
+    "initial_definitions": {
+      "sla_low": 72,
+      "sla_medium": 48,
+      "sla_high": 12,
+      "sla_critical": 1
+    },
+    "initial_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_4",
+      "rule_5",
+      "rule_6",
+      "rule_7"
+    ],
+    "gold_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_4",
+      "rule_5",
+      "rule_6",
+      "rule_7",
+      "update_1_override",
+      "update_2_new_rule",
+      "update_3_new_rule",
+      "update_4_new_rule"
+    ],
+    "rules_added_by_updates": [
+      "update_1_override",
+      "update_2_new_rule",
+      "update_3_new_rule",
+      "update_4_new_rule"
+    ],
+    "rules_removed_by_updates": [],
+    "update_stream": [
+      {
+        "type": "override_existing",
+        "description": "Add override rule 'update_1_override' that overrides 'rule_4'",
+        "rule_id": "update_1_override",
+        "overrides": [
+          "rule_4"
+        ],
+        "conditions": [
+          "is_revenue_impacting == True"
+        ],
+        "decision": "page_oncall"
+      },
+      {
+        "type": "add_rule",
+        "description": "Add new rule: update_2_new_rule",
+        "rule_id": "update_2_new_rule",
+        "conditions": [
+          "ticket_age_hours <= {sla_high}",
+          "customer_tier == 'free'"
+        ],
+        "decision": "no_action",
+        "overrides": [
+          "rule_6"
+        ]
+      },
+      {
+        "type": "add_rule",
+        "description": "Add new rule: update_3_new_rule",
+        "rule_id": "update_3_new_rule",
+        "conditions": [
+          "customer_tier == 'free'",
+          "severity == 'medium'"
+        ],
+        "decision": "escalate_l2",
+        "overrides": []
+      },
+      {
+        "type": "add_rule",
+        "description": "Add new rule: update_4_new_rule",
+        "rule_id": "update_4_new_rule",
+        "conditions": [
+          "ticket_age_hours <= {sla_critical}"
+        ],
+        "decision": "escalate_l3",
+        "overrides": [
+          "update_2_new_rule"
+        ]
+      },
+      {
+        "type": "change_decision",
+        "description": "Change decision of 'update_3_new_rule' from escalate_l2 to no_action",
+        "rule_id": "update_3_new_rule",
+        "old_decision": "escalate_l2",
+        "new_decision": "no_action"
+      },
+      {
+        "type": "change_decision",
+        "description": "Change decision of 'update_2_new_rule' from no_action to escalate_manager",
+        "rule_id": "update_2_new_rule",
+        "old_decision": "no_action",
+        "new_decision": "escalate_manager"
+      }
+    ],
+    "interacting_update_pairs": [],
+    "counterexample_of_initial": {
+      "scenario": {
+        "customer_tier": "starter",
+        "is_security_related": false,
+        "previous_escalations": 1,
+        "ticket_age_hours": 18,
+        "is_revenue_impacting": true,
+        "severity": "high"
+      },
+      "expected_decision": "page_oncall",
+      "expected_rule": "update_1_override",
+      "actual_decision": "no_action",
+      "actual_rule": "rule_6"
+    }
+  },
+  {
+    "example_id": "ex_088",
+    "domain": "refund",
+    "difficulty": "very_hard",
+    "n_rules_initial": 10,
+    "n_updates": 7,
+    "seed": 88,
+    "story": "Four add_exception operations each inherit their parent rule's conditions plus one extra. Priority inversions then reorder these stacked exceptions. Maintaining correct layering under both changes requires tracking 10+ rule interactions simultaneously.",
+    "dominant_interaction_pattern": "definition propagation, priority inversion",
+    "behavioral_diff_pct": 59.7,
+    "failure_breakdown_initial_vs_gold": {
+      "wrong_priority": 483,
+      "wrong_decision": 70,
+      "stale_rule_retained": 44
+    },
+    "initial_policy": "definitions:\n  standard_window: 60\n  extended_window: 60\n  max_refund_amount: 500\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: offer_store_credit\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - purchase_channel == 'phone'\n  decision: approve_refund\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - purchase_channel == 'online'\n  - customer_tier in ['silver', 'platinum', 'gold']\n  decision: escalate_to_manager\n  priority: 3\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - item_condition == 'damaged'\n  decision: escalate_to_manager\n  priority: 4\n  overrides:\n  - rule_2\n- id: rule_4\n  description: Auto-generated rule 4\n  conditions:\n  - item_price > {standard_window}\n  decision: offer_store_credit\n  priority: 5\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - customer_tier in ['platinum', 'silver', 'bronze']\n  decision: offer_store_credit\n  priority: 6\n  overrides:\n  - rule_2\n- id: rule_6\n  description: Auto-generated rule 6\n  conditions:\n  - customer_tier in ['bronze', 'platinum', 'gold']\n  decision: approve_refund\n  priority: 7\n  overrides:\n  - rule_2\n  - rule_4\n- id: rule_7\n  description: Auto-generated rule 7\n  conditions:\n  - is_final_sale == False\n  - purchase_age_days <= 147\n  decision: offer_store_credit\n  priority: 8\n  overrides:\n  - rule_6\n  - rule_4\n- id: rule_8\n  description: Auto-generated rule 8\n  conditions:\n  - is_final_sale == False\n  - item_condition == 'defective'\n  - customer_tier in ['platinum']\n  decision: escalate_to_manager\n  priority: 9\n  overrides:\n  - rule_2\n  - rule_5\n- id: rule_9\n  description: Auto-generated rule 9\n  conditions:\n  - purchase_channel == 'online'\n  - item_condition in ['unopened']\n  decision: escalate_to_manager\n  priority: 10\n",
+    "gold_policy": "definitions:\n  standard_window: 45\n  extended_window: 60\n  max_refund_amount: 500\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: offer_store_credit\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - purchase_channel == 'phone'\n  decision: approve_refund\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - purchase_channel == 'online'\n  - customer_tier in ['silver', 'platinum', 'gold']\n  decision: escalate_to_manager\n  priority: 3\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - item_condition == 'damaged'\n  decision: escalate_to_manager\n  priority: 8\n  overrides:\n  - rule_2\n- id: rule_4\n  description: Auto-generated rule 4\n  conditions:\n  - item_price > {standard_window}\n  decision: offer_store_credit\n  priority: 5\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - customer_tier in ['platinum', 'silver', 'bronze']\n  decision: offer_store_credit\n  priority: 10\n  overrides:\n  - rule_2\n- id: rule_6\n  description: Auto-generated rule 6\n  conditions:\n  - customer_tier in ['bronze', 'platinum', 'gold']\n  decision: approve_refund\n  priority: 7\n  overrides:\n  - rule_2\n  - rule_4\n- id: rule_7\n  description: Auto-generated rule 7\n  conditions:\n  - is_final_sale == False\n  - purchase_age_days <= 147\n  decision: offer_store_credit\n  priority: 6\n  overrides:\n  - rule_6\n  - rule_4\n- id: rule_8\n  description: Auto-generated rule 8\n  conditions:\n  - is_final_sale == False\n  - item_condition == 'defective'\n  - customer_tier in ['platinum']\n  decision: escalate_to_manager\n  priority: 9\n  overrides:\n  - rule_2\n  - rule_5\n- id: rule_9\n  description: Auto-generated rule 9\n  conditions:\n  - purchase_channel == 'online'\n  - item_condition in ['unopened']\n  decision: deny_refund\n  priority: 4\n- id: update_5_override\n  description: Override of rule_6\n  conditions:\n  - item_price < 804\n  decision: approve_refund\n  priority: 11\n  overrides:\n  - rule_6\n",
+    "initial_definitions": {
+      "standard_window": 60,
+      "extended_window": 60,
+      "max_refund_amount": 500
+    },
+    "initial_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_4",
+      "rule_5",
+      "rule_6",
+      "rule_7",
+      "rule_8",
+      "rule_9"
+    ],
+    "gold_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_4",
+      "rule_5",
+      "rule_6",
+      "rule_7",
+      "rule_8",
+      "rule_9",
+      "update_5_override"
+    ],
+    "rules_added_by_updates": [
+      "update_5_override"
+    ],
+    "rules_removed_by_updates": [],
+    "update_stream": [
+      {
+        "type": "change_decision",
+        "description": "Change decision of 'rule_9' from escalate_to_manager to deny_refund",
+        "rule_id": "rule_9",
+        "old_decision": "escalate_to_manager",
+        "new_decision": "deny_refund"
+      },
+      {
+        "type": "change_priority",
+        "description": "Swap priorities: 'rule_7' (pri 8) <-> 'rule_3' (pri 4)",
+        "rule_id_1": "rule_7",
+        "rule_id_2": "rule_3"
+      },
+      {
+        "type": "change_priority",
+        "description": "Swap priorities: 'rule_5' (pri 6) <-> 'rule_7' (pri 4)",
+        "rule_id_1": "rule_5",
+        "rule_id_2": "rule_7"
+      },
+      {
+        "type": "change_priority",
+        "description": "Swap priorities: 'rule_9' (pri 10) <-> 'rule_5' (pri 4)",
+        "rule_id_1": "rule_9",
+        "rule_id_2": "rule_5"
+      },
+      {
+        "type": "override_existing",
+        "description": "Add override rule 'update_5_override' that overrides 'rule_6'",
+        "rule_id": "update_5_override",
+        "overrides": [
+          "rule_6"
+        ],
+        "conditions": [
+          "item_price < 804"
+        ],
+        "decision": "approve_refund"
+      },
+      {
+        "type": "change_definition",
+        "description": "Change definition 'standard_window' from 60 to 45",
+        "key": "standard_window",
+        "old_value": 60,
+        "new_value": 45
+      }
+    ],
+    "interacting_update_pairs": [
+      "Update 2 (change_priority) \u2192 Update 5 (override_existing): priority reordering changes which rule the override/exception applies to",
+      "Update 3 (change_priority) \u2192 Update 5 (override_existing): priority reordering changes which rule the override/exception applies to",
+      "Update 4 (change_priority) \u2192 Update 5 (override_existing): priority reordering changes which rule the override/exception applies to"
+    ],
+    "counterexample_of_initial": {
+      "scenario": {
+        "purchase_channel": "online",
+        "customer_tier": "platinum",
+        "item_condition": "unopened",
+        "item_price": 1342,
+        "is_final_sale": true,
+        "purchase_age_days": 187
+      },
+      "expected_decision": "offer_store_credit",
+      "expected_rule": "rule_5",
+      "actual_decision": "escalate_to_manager",
+      "actual_rule": "rule_9"
+    }
+  },
+  {
+    "example_id": "ex_099",
+    "domain": "approval",
+    "difficulty": "very_hard",
+    "n_rules_initial": 10,
+    "n_updates": 8,
+    "seed": 99,
+    "story": "All nine update types appear across 8 sequential changes. A definition change in step 2 affects conditions that are narrowed in step 5. A rule revoked in step 3 was an override target for a rule added in step 6. The update stream is deliberately non-local: almost every step touches something a prior step already changed.",
+    "dominant_interaction_pattern": "priority inversion, scope exposure, revoke-exposes-fallback",
+    "behavioral_diff_pct": 41.6,
+    "failure_breakdown_initial_vs_gold": {
+      "wrong_decision": 416
+    },
+    "initial_policy": "definitions:\n  auto_approve_limit: 250\n  manager_limit: 2500\n  director_limit: 10000\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: deny\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - department == 'engineering'\n  - is_recurring == False\n  - is_budgeted == False\n  decision: deny\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - is_recurring == False\n  - is_budgeted == True\n  - amount > {director_limit}\n  decision: director_approval\n  priority: 3\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - department in ['engineering', 'legal', 'sales']\n  - is_recurring == False\n  - expense_type == 'hardware'\n  decision: deny\n  priority: 4\n  overrides:\n  - rule_2\n- id: rule_4\n  description: Auto-generated rule 4\n  conditions:\n  - amount <= 3364\n  - expense_type == 'software'\n  - department in ['legal', 'sales', 'marketing', 'engineering']\n  decision: auto_approve\n  priority: 5\n  overrides:\n  - rule_2\n- id: rule_5\n  description: Auto-generated rule 5\n  conditions:\n  - expense_type in ['hardware', 'travel']\n  - amount >= {auto_approve_limit}\n  - is_recurring == True\n  decision: auto_approve\n  priority: 6\n- id: rule_6\n  description: Auto-generated rule 6\n  conditions:\n  - requester_level == 'ic'\n  - is_budgeted == False\n  decision: vp_approval\n  priority: 7\n- id: rule_7\n  description: Auto-generated rule 7\n  conditions:\n  - is_recurring == True\n  decision: deny\n  priority: 8\n- id: rule_8\n  description: Auto-generated rule 8\n  conditions:\n  - amount > {manager_limit}\n  decision: manager_approval\n  priority: 9\n- id: rule_9\n  description: Auto-generated rule 9\n  conditions:\n  - is_budgeted == False\n  decision: vp_approval\n  priority: 10\n",
+    "gold_policy": "definitions:\n  auto_approve_limit: 250\n  manager_limit: 2500\n  director_limit: 10000\nrules:\n- id: default_action\n  description: Default fallback when no other rule matches\n  conditions: []\n  decision: deny\n  priority: 1\n- id: rule_1\n  description: Auto-generated rule 1\n  conditions:\n  - department == 'engineering'\n  - is_recurring == False\n  - is_budgeted == False\n  decision: deny\n  priority: 2\n- id: rule_2\n  description: Auto-generated rule 2\n  conditions:\n  - is_recurring == False\n  - amount > {director_limit}\n  decision: vp_approval\n  priority: 3\n- id: rule_3\n  description: Auto-generated rule 3\n  conditions:\n  - department in ['engineering', 'legal', 'sales']\n  - is_recurring == False\n  - expense_type == 'hardware'\n  - expense_type == 'travel'\n  decision: manager_approval\n  priority: 4\n  overrides:\n  - rule_2\n- id: rule_6\n  description: Auto-generated rule 6\n  conditions:\n  - is_budgeted == False\n  decision: vp_approval\n  priority: 7\n- id: rule_7\n  description: Auto-generated rule 7\n  conditions:\n  - is_recurring == True\n  decision: deny\n  priority: 8\n- id: rule_8\n  description: Auto-generated rule 8\n  conditions:\n  - amount > {manager_limit}\n  decision: manager_approval\n  priority: 10\n- id: rule_9\n  description: Auto-generated rule 9\n  conditions:\n  - is_budgeted == False\n  decision: vp_approval\n  priority: 9\n",
+    "initial_definitions": {
+      "auto_approve_limit": 250,
+      "manager_limit": 2500,
+      "director_limit": 10000
+    },
+    "initial_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_4",
+      "rule_5",
+      "rule_6",
+      "rule_7",
+      "rule_8",
+      "rule_9"
+    ],
+    "gold_rule_ids": [
+      "default_action",
+      "rule_1",
+      "rule_2",
+      "rule_3",
+      "rule_6",
+      "rule_7",
+      "rule_8",
+      "rule_9"
+    ],
+    "rules_added_by_updates": [],
+    "rules_removed_by_updates": [
+      "rule_4",
+      "rule_5"
+    ],
+    "update_stream": [
+      {
+        "type": "revoke_rule",
+        "description": "Revoke rule: rule_4",
+        "rule_id": "rule_4"
+      },
+      {
+        "type": "narrow_scope",
+        "description": "Narrow scope of 'rule_3': add condition 'expense_type == 'travel''",
+        "rule_id": "rule_3",
+        "added_condition": "expense_type == 'travel'"
+      },
+      {
+        "type": "change_decision",
+        "description": "Change decision of 'rule_2' from director_approval to vp_approval",
+        "rule_id": "rule_2",
+        "old_decision": "director_approval",
+        "new_decision": "vp_approval"
+      },
+      {
+        "type": "change_priority",
+        "description": "Swap priorities: 'rule_8' (pri 9) <-> 'rule_9' (pri 10)",
+        "rule_id_1": "rule_8",
+        "rule_id_2": "rule_9"
+      },
+      {
+        "type": "revoke_rule",
+        "description": "Revoke rule: rule_5",
+        "rule_id": "rule_5"
+      },
+      {
+        "type": "widen_scope",
+        "description": "Widen scope of 'rule_6': remove condition 'requester_level == 'ic''",
+        "rule_id": "rule_6",
+        "removed_condition": "requester_level == 'ic'"
+      },
+      {
+        "type": "change_decision",
+        "description": "Change decision of 'rule_3' from deny to manager_approval",
+        "rule_id": "rule_3",
+        "old_decision": "deny",
+        "new_decision": "manager_approval"
+      },
+      {
+        "type": "widen_scope",
+        "description": "Widen scope of 'rule_2': remove condition 'is_budgeted == True'",
+        "rule_id": "rule_2",
+        "removed_condition": "is_budgeted == True"
+      }
+    ],
+    "interacting_update_pairs": [
+      "Update 1 (revoke) \u2192 Update 6 (widen_scope): revoking exposes new winners that the later change then modifies",
+      "Update 1 (revoke) \u2192 Update 8 (widen_scope): revoking exposes new winners that the later change then modifies",
+      "Update 5 (revoke) \u2192 Update 6 (widen_scope): revoking exposes new winners that the later change then modifies",
+      "Update 5 (revoke) \u2192 Update 8 (widen_scope): revoking exposes new winners that the later change then modifies"
+    ],
+    "counterexample_of_initial": {
+      "scenario": {
+        "department": "unknown_value",
+        "is_recurring": false,
+        "is_budgeted": false,
+        "amount": 25357,
+        "expense_type": "hardware"
+      },
+      "expected_decision": "manager_approval",
+      "expected_rule": "rule_8",
+      "actual_decision": "vp_approval",
+      "actual_rule": "rule_9"
+    }
+  }
+]

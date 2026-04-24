@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StateBench — No-Oracle Policy Maintenance Benchmark</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #242837;
+    --border: #2e3347;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --accent: #6366f1;
+    --accent2: #818cf8;
+    --green: #22c55e;
+    --red: #ef4444;
+    --orange: #f59e0b;
+    --yellow: #eab308;
+    --cyan: #06b6d4;
+    --code-bg: #161b27;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  /* every slide is a full viewport section */
+  .slide {
+    min-height: 100vh;
+    padding: 56px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: 2px solid var(--border);
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  /* label at top */
+  .label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    border: 1px solid rgba(129,140,248,0.3);
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 22px;
+    width: fit-content;
+  }
+  h1 { font-size: 2.8rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; color: var(--text); }
+  h2 { font-size: 1.9rem; font-weight: 700; color: var(--text); margin-bottom: 24px; }
+  h3 { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  p { color: var(--muted); margin-bottom: 10px; }
+  strong { color: var(--text); }
+
+  /* layout */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; margin-top: 24px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-top: 24px; }
+
+  /* cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .card.green  { border-color: var(--green); }
+  .card.red    { border-color: var(--red); }
+  .card.orange { border-color: var(--orange); }
+  .card.indigo { border-color: var(--accent); }
+  .card.cyan   { border-color: var(--cyan); }
+
+  /* big stat */
+  .big-stat { font-size: 3.2rem; font-weight: 900; line-height: 1; }
+  .big-stat.red    { color: var(--red); }
+  .big-stat.green  { color: var(--green); }
+  .big-stat.orange { color: var(--orange); }
+  .big-stat.indigo { color: var(--accent2); }
+  .stat-label { font-size: 0.85rem; color: var(--muted); margin-top: 6px; }
+
+  /* hero stats row */
+  .stats-row { display: flex; gap: 48px; margin-top: 40px; flex-wrap: wrap; }
+
+  /* code */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 0.8rem;
+    line-height: 1.65;
+    color: #c9d1d9;
+  }
+  code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.88em;
+    background: var(--surface2);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--accent2);
+  }
+
+  /* tables */
+  table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 0.9rem; }
+  th {
+    background: var(--surface2);
+    color: var(--accent2);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+  }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--muted); }
+  tr:last-child td { border-bottom: none; }
+  td strong { color: var(--text); }
+  .row-highlight { background: rgba(99,102,241,0.07); }
+  .pass { color: var(--green); font-weight: 700; }
+  .fail { color: var(--red);   font-weight: 700; }
+
+  /* bullets */
+  ul.clean { list-style: none; margin: 12px 0; }
+  ul.clean li {
+    padding: 6px 0 6px 22px;
+    position: relative;
+    color: var(--muted);
+    font-size: 0.95rem;
+    border-bottom: 1px solid rgba(46,51,71,0.5);
+  }
+  ul.clean li:last-child { border-bottom: none; }
+  ul.clean li::before { content: '→'; position: absolute; left: 0; color: var(--accent2); font-weight: 700; }
+
+  /* score bar */
+  .score-bar { margin-top: 14px; }
+  .score-bar-top { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 5px; }
+  .score-bar-bg { background: var(--surface2); border-radius: 4px; height: 10px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-red    { background: var(--red); }
+  .bar-orange { background: var(--orange); }
+  .bar-green  { background: var(--green); }
+
+  /* update stream list */
+  .update-list { list-style: none; margin: 0; }
+  .update-list li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
+  .update-list li:last-child { border-bottom: none; }
+  .unum {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; color: var(--accent2);
+    margin-top: 1px;
+  }
+  .utag {
+    flex-shrink: 0;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 2px 6px; border-radius: 3px; margin-top: 2px; height: fit-content;
+  }
+  .t-add    { background: rgba(99,102,241,0.18); color: var(--accent2); }
+  .t-swap   { background: rgba(245,158,11,0.18); color: var(--orange); }
+  .t-revoke { background: rgba(239,68,68,0.18);  color: var(--red); }
+  .t-modify { background: rgba(6,182,212,0.18);  color: var(--cyan); }
+  .t-noop   { background: rgba(139,146,164,0.18);color: var(--muted); }
+  .utext { color: var(--text); }
+
+  /* trajectory steps */
+  .traj { display: flex; flex-direction: column; gap: 0; }
+  .traj-step {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .traj-step:last-child { border-bottom: none; }
+  .t-icon {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; color: var(--accent2);
+  }
+  .t-tool { font-weight: 600; font-size: 0.88rem; font-family: 'SF Mono', monospace; color: var(--accent2); }
+  .t-result { font-size: 0.8rem; color: var(--muted); margin-top: 1px; }
+  .t-result.ok  { color: var(--green); }
+  .t-result.err { color: var(--red); }
+
+  /* failure pills */
+  .pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .pill { padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; }
+  .pill-p { background: rgba(245,158,11,0.14); color: var(--orange); border: 1px solid rgba(245,158,11,0.35); }
+  .pill-s { background: rgba(239,68,68,0.14);  color: var(--red);    border: 1px solid rgba(239,68,68,0.35); }
+  .pill-d { background: rgba(99,102,241,0.14); color: var(--accent2);border: 1px solid rgba(99,102,241,0.35); }
+
+  /* callout boxes */
+  .callout {
+    border-radius: 8px; padding: 16px 20px; margin: 14px 0;
+    font-size: 0.9rem; line-height: 1.5;
+  }
+  .callout p { margin: 0; }
+  .callout-blue  { background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.3); color: var(--text); }
+  .callout-red   { background: rgba(239,68,68,0.08);  border: 1px solid rgba(239,68,68,0.3);  color: var(--red); }
+  .callout-green { background: rgba(34,197,94,0.08);  border: 1px solid rgba(34,197,94,0.3);  color: var(--green); }
+  .callout-orange{ background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3); color: var(--orange); }
+
+  /* timeline for design decisions */
+  .timeline { position: relative; padding-left: 28px; margin-top: 20px; }
+  .timeline::before { content:''; position:absolute; left:7px; top:0; bottom:0; width:2px; background:var(--border); }
+  .tl-item { position:relative; margin-bottom:22px; }
+  .tl-item::before { content:''; position:absolute; left:-25px; top:7px; width:12px; height:12px; border-radius:50%; background:var(--accent); border:2px solid var(--bg); }
+  .tl-rate { font-size:1.6rem; font-weight:900; }
+  .tl-rate.bad    { color: var(--orange); }
+  .tl-rate.target { color: var(--green); }
+  .tl-title { font-weight:700; color:var(--text); margin-bottom:3px; }
+  .tl-desc  { font-size:0.88rem; color:var(--muted); }
+
+  /* failure mode definition box */
+  .fmode {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .fmode-name {
+    font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+    padding: 3px 9px; border-radius: 4px; margin-bottom: 10px; display: inline-block;
+  }
+  .fm-p { background: rgba(245,158,11,0.18); color: var(--orange); }
+  .fm-s { background: rgba(239,68,68,0.18);  color: var(--red); }
+  .fm-d { background: rgba(99,102,241,0.18); color: var(--accent2); }
+  .fmode p { font-size: 0.9rem; color: var(--muted); margin-bottom: 6px; }
+  .fmode .example { font-size: 0.82rem; color: var(--muted); font-style: italic; }
+
+  /* generation step */
+  .gen-step {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+  }
+  .gen-step:last-child { border-bottom: none; }
+  .gen-num {
+    flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+    background: var(--accent); display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 800; color: white;
+  }
+  .gen-title { font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .gen-desc  { color: var(--muted); }
+
+  /* kv row */
+  .kv { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
+  .kv:last-child { border-bottom: none; }
+  .kv-k { color: var(--muted); }
+  .kv-v { color: var(--text); font-weight: 600; }
+
+  /* absent tag */
+  .absent { color: var(--red); text-decoration: line-through; opacity: 0.6; font-family: 'SF Mono', monospace; font-size: 0.82rem; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 1: Title -->
+<div class="slide">
+  <div class="label">StateBench — No-Oracle Benchmark</div>
+  <h1>Can a frontier model track<br>policy changes across 10 interacting updates?</h1>
+  <p style="margin-top:16px; font-size:1.05rem; max-width:760px; color:var(--muted);">
+    We built a benchmark that tests <strong style="color:var(--text)">global state tracking</strong> in evolving rule systems —
+    without letting the model see behavioral feedback before its final answer.
+    Scored on 2,000 sampled scenarios. Pass = ≥ 95% agreement with gold policy.
+  </p>
+
+  <!-- Two models side by side -->
+  <div class="two-col" style="margin-top:32px; gap:24px;">
+    <div class="card" style="border-color:rgba(99,102,241,0.5);">
+      <div style="font-size:0.72rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent2); margin-bottom:12px;">Anthropic — claude-sonnet-4-6</div>
+      <div style="display:flex; gap:32px; flex-wrap:wrap;">
+        <div>
+          <div class="big-stat red" style="font-size:2.6rem;">16.7%</div>
+          <div class="stat-label">pass rate (3/18 tasks)</div>
+        </div>
+        <div>
+          <div class="big-stat indigo" style="font-size:2.6rem;">0.772</div>
+          <div class="stat-label">avg behavioral score</div>
+        </div>
+        <div>
+          <div class="big-stat" style="font-size:2.6rem; color:var(--cyan);">4.7</div>
+          <div class="stat-label">avg tool calls</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(6,182,212,0.5);">
+      <div style="font-size:0.72rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--cyan); margin-bottom:12px;">OpenAI — o3 (reasoning model)</div>
+      <div style="display:flex; gap:32px; flex-wrap:wrap;">
+        <div>
+          <div class="big-stat red" style="font-size:2.6rem;">10.0%</div>
+          <div class="stat-label">pass rate (2/20 tasks)</div>
+        </div>
+        <div>
+          <div class="big-stat" style="font-size:2.6rem; color:var(--orange);">0.650</div>
+          <div class="stat-label">avg behavioral score</div>
+        </div>
+        <div>
+          <div class="big-stat" style="font-size:2.6rem; color:var(--cyan);">4.4</div>
+          <div class="stat-label">avg tool calls</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-blue" style="margin-top:24px;">
+    <p><strong>Key finding:</strong> Both a standard frontier model (claude-sonnet-4-6) and OpenAI's most capable reasoning model (o3) score below 17% on the ultra-hard task suite. The benchmark is hard for the right reason — priority arithmetic collapse — not because of formatting or parsing difficulty. 100% of failures on both models involve <code>wrong_priority</code> or <code>stale_rule_retained</code>.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 2: The problem -->
+<div class="slide">
+  <div class="label">01 · The Problem</div>
+  <h2>Models edit well. They don't maintain well.</h2>
+
+  <div class="two-col">
+    <div class="card green">
+      <h3 style="color:var(--green)">✓ What models do well</h3>
+      <ul class="clean">
+        <li>Apply a single rule change cleanly</li>
+        <li>Parse and re-emit structured YAML</li>
+        <li>Understand natural-language policy memos</li>
+        <li>Make isolated edits accurately (~85% correct per update)</li>
+      </ul>
+    </div>
+    <div class="card red">
+      <h3 style="color:var(--red)">✗ What models fail at</h3>
+      <ul class="clean">
+        <li>Tracking cumulative state across 8–10 <em>interacting</em> changes</li>
+        <li>Re-computing global priority order after mid-stream adds + revocations</li>
+        <li>Recognising that a revocation reshapes which remaining rules now compete</li>
+        <li>Submitted policy wrong in <strong>40–80% of scenarios</strong> after 3 swaps + 2 revocations</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-blue" style="margin-top:28px;">
+    <p><strong>The failure is not editing ability.</strong> It is the inability to mentally execute a sequence of non-commutative mutations on a shared data structure and arrive at the correct final state. This matters in real-world policy maintenance: access control, compliance rules, pricing logic, SLA escalation trees.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 3: What the agent sees -->
+<div class="slide">
+  <div class="label">02 · The Task</div>
+  <h2>What the model receives</h2>
+
+  <div class="two-col">
+    <div>
+      <h3>Initial policy (YAML)</h3>
+      <pre>definitions:
+  standard_window: 60      # shared numeric constant
+  max_refund_amount: 100
+
+rules:
+- id: r001
+  conditions: []           # empty = catch-all default
+  decision: request_documentation
+  priority: 1
+
+- id: r005
+  conditions:
+  - customer_tier in ['platinum']
+  - item_condition == 'defective'
+  decision: approve_refund
+  priority: 5
+
+- id: r012
+  conditions:
+  - purchase_channel == 'online'
+  decision: escalate_to_manager
+  priority: 12
+# ... 9 more rules</pre>
+      <p style="margin-top:10px; font-size:0.83rem;"><strong>Key:</strong> highest priority wins when multiple rules match. Definitions are shared — changing one propagates to all rules that reference it.</p>
+    </div>
+
+    <div>
+      <h3>Update stream (8–10 memos, all in the same surface form)</h3>
+      <ul class="update-list">
+        <li><div class="unum">1</div><div class="utext">Situations in which the customer tier is platinum are to be handled as: escalate to a manager.</div></li>
+        <li><div class="unum">2</div><div class="utext">Where the purchase channel is phone, and the final sale status is active, and the item price is at most 100 and the customer tier is platinum, and the item condition is defective overlap, offer store credit is the applicable outcome.</div></li>
+        <li><div class="unum">3</div><div class="utext">The separate handling for cases where the customer tier is platinum, and the item condition is defective has been removed.</div></li>
+        <li><div class="unum">4</div><div class="utext">Where the customer tier is platinum applies, the outcome is deny the refund.</div></li>
+        <li><div class="unum">5</div><div class="utext">When the purchase age (in days) is less than 100, and the purchase channel is online or in store, and the customer tier is silver and the purchase channel is phone or in store both hold, the outcome is request documentation.</div></li>
+        <li><div class="unum">6</div><div class="utext">No distinct rule governs cases where the final sale status is not active, and the customer tier is platinum or silver.</div></li>
+        <li><div class="unum">7</div><div class="utext">Cases satisfying both [purchase age &lt; 100, channel in online/in_store, tier = silver] and [channel = online, condition = defective, age &gt; 60] result in request documentation, not approve the refund.</div></li>
+        <li><div class="unum">8</div><div class="utext">Cases where the purchase channel is phone or in store should result in offer store credit.</div></li>
+      </ul>
+      <div class="callout callout-orange" style="margin-top:12px;">
+        <p><strong>Critical design choice:</strong> all update types — adds, revocations, priority swaps, no-ops — use the same wording. The model cannot infer the operation type from the memo text.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 3b: Update types -->
+<div class="slide">
+  <div class="label">The 6 Update Types — What Can Appear in the Stream</div>
+  <h2>Every memo is one of six types. The model never sees which.</h2>
+  <p style="margin-bottom:24px;">All six types use identical surface form: <em>"When [conditions], [decision]."</em> The model must reason from the semantics alone — not from wording — to figure out what YAML change (if any) is required.</p>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+    <div class="fmode" style="border-left:3px solid var(--accent2);">
+      <div class="fmode-name" style="background:rgba(99,102,241,0.15); color:var(--accent2);">chain_create — Add a new rule</div>
+      <p><strong>What it means:</strong> a brand new rule needs to be inserted into the policy with new conditions, a decision, and a priority.</p>
+      <p><strong>Correct action:</strong> add a new rule block to the YAML. Assign it a priority that fits above or below existing rules correctly.</p>
+      <div class="example" style="font-size:0.82rem; color:var(--muted); font-style:italic; margin-top:8px;">"Situations in which the customer tier is platinum are to be handled as: escalate to a manager."</div>
+      <p style="font-size:0.82rem; margin-top:6px;"><strong style="color:var(--orange);">Trap:</strong> the model must not duplicate an existing rule that already covers platinum customers.</p>
+    </div>
+
+    <div class="fmode" style="border-left:3px solid var(--cyan);">
+      <div class="fmode-name" style="background:rgba(6,182,212,0.15); color:var(--cyan);">chain_ref — Modify an existing rule</div>
+      <p><strong>What it means:</strong> a rule that was already created (often by a prior chain_create in the same stream) needs its decision changed.</p>
+      <p><strong>Correct action:</strong> find the existing rule with those conditions and update only its decision field. Do not add a new rule.</p>
+      <div class="example" style="font-size:0.82rem; color:var(--muted); font-style:italic; margin-top:8px;">"Where the customer tier is platinum applies, the outcome is deny the refund." <em>(same conditions as the chain_create — different decision)</em></div>
+      <p style="font-size:0.82rem; margin-top:6px;"><strong style="color:var(--orange);">Trap:</strong> looks identical to chain_create. Model must recognise the conditions already exist and modify rather than add.</p>
+    </div>
+
+    <div class="fmode" style="border-left:3px solid var(--orange);">
+      <div class="fmode-name" style="background:rgba(245,158,11,0.15); color:var(--orange);">change_priority — Priority swap</div>
+      <p><strong>What it means:</strong> two rules whose conditions overlap are in the wrong priority order. The memo names the conditions of both and states which decision should win.</p>
+      <p><strong>Correct action:</strong> adjust the priority numbers so the winning rule's priority is higher than the losing rule's. All other rules must remain correctly ordered relative to each other.</p>
+      <div class="example" style="font-size:0.82rem; color:var(--muted); font-style:italic; margin-top:8px;">"Where [condition A] and [condition B] both hold, offer store credit is the applicable outcome."</div>
+      <p style="font-size:0.82rem; margin-top:6px;"><strong style="color:var(--orange);">Trap:</strong> fixing one pair can break the relative order of other rules. Three of these in a row is what causes priority arithmetic collapse.</p>
+    </div>
+
+    <div class="fmode" style="border-left:3px solid var(--red);">
+      <div class="fmode-name" style="background:rgba(239,68,68,0.15); color:var(--red);">revoke_rule — Delete a rule entirely</div>
+      <p><strong>What it means:</strong> a rule that currently exists in the policy should be removed completely. No separate handling for those conditions anymore.</p>
+      <p><strong>Correct action:</strong> delete the entire rule block from the YAML. Do not modify it — remove it.</p>
+      <div class="example" style="font-size:0.82rem; color:var(--muted); font-style:italic; margin-top:8px;">"The separate handling for cases where the customer tier is platinum and the item condition is defective has been removed."</div>
+      <p style="font-size:0.82rem; margin-top:6px;"><strong style="color:var(--orange);">Trap:</strong> surface form is almost identical to a chain_ref. Model must detect "removed" / "no longer" language and delete, not modify.</p>
+    </div>
+
+    <div class="fmode" style="border-left:3px solid var(--muted);">
+      <div class="fmode-name" style="background:rgba(139,146,164,0.15); color:var(--muted);">no_op_disguised — Do nothing</div>
+      <p><strong>What it means:</strong> the memo describes behavior that is already correctly handled by an existing rule. No change to the YAML is needed.</p>
+      <p><strong>Correct action:</strong> recognise that this scenario is already covered. Make zero edits.</p>
+      <div class="example" style="font-size:0.82rem; color:var(--muted); font-style:italic; margin-top:8px;">"Cases where the purchase channel is phone or in store should result in offer store credit." <em>(a rule for this already exists at priority 10)</em></div>
+      <p style="font-size:0.82rem; margin-top:6px;"><strong style="color:var(--orange);">Trap:</strong> looks like every other memo. Adding a redundant rule creates a priority conflict or shadow rule that breaks other scenarios.</p>
+    </div>
+
+    <div class="fmode" style="border-left:3px solid var(--yellow);">
+      <div class="fmode-name" style="background:rgba(234,179,8,0.15); color:var(--yellow);">update_default — Change the fallback</div>
+      <p><strong>What it means:</strong> the catch-all default rule (empty conditions, always priority 1) needs its decision changed.</p>
+      <p><strong>Correct action:</strong> find the rule with empty conditions and update its decision field only.</p>
+      <div class="example" style="font-size:0.82rem; color:var(--muted); font-style:italic; margin-top:8px;">"Unmatched cases result in escalate to a manager."</div>
+      <p style="font-size:0.82rem; margin-top:6px;"><strong style="color:var(--orange);">Trap:</strong> only appears in 10-update tasks. Model must identify the default rule (empty conditions) rather than creating a new rule.</p>
+    </div>
+
+  </div>
+
+  <div class="callout callout-orange" style="margin-top:20px;">
+    <p><strong>The core difficulty:</strong> all six types arrive in the same uniform memo format. There are no labels, no keywords that reliably signal which type it is. The model must infer the operation from the semantics — and do this correctly for all 8–10 memos simultaneously before making any edits.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 4: Tools -->
+<div class="slide">
+  <div class="label">03 · Tool Design — No Oracle</div>
+  <h2>5 tools. Zero behavioral feedback before submission.</h2>
+
+  <div class="two-col">
+    <div>
+      <h3>What the model has</h3>
+      <table>
+        <thead><tr><th>Tool</th><th>Returns</th><th>What it reveals</th></tr></thead>
+        <tbody>
+          <tr><td><code>read_policy()</code></td><td>Current YAML</td><td>Full artifact text</td></tr>
+          <tr><td><code>read_updates()</code></td><td>All memos</td><td>Full update stream</td></tr>
+          <tr><td><code>edit_policy(yaml)</code></td><td><code>{"status":"ok"}</code></td><td><strong style="color:var(--red)">Nothing</strong> — blind replace</td></tr>
+          <tr><td><code>compile_check()</code></td><td>ok or error</td><td>Syntax only — no behavior</td></tr>
+          <tr><td><code>submit()</code></td><td>Final score</td><td>Only after submission</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-red" style="margin-top:16px;">
+        <p><strong>edit_policy() is deliberately blind.</strong> It returns only <code>{"status":"ok"}</code> — no rule count, no priority summary, no structural hints. The model cannot sanity-check its edit before submitting.</p>
+      </div>
+    </div>
+
+    <div>
+      <h3>What was deliberately removed</h3>
+
+      <div class="card" style="margin-bottom:12px;">
+        <p class="absent">run_tests()</p>
+        <p style="font-size:0.88rem; margin-top:6px;">Would let the model preview behavioral errors and iterate to a correct answer. With this tool: <strong style="color:var(--green)">86.7% pass rate</strong>. That's not a benchmark — it's a search problem.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:12px;">
+        <p class="absent">find_counterexample()</p>
+        <p style="font-size:0.88rem; margin-top:6px;">Would pinpoint exactly which scenario type was wrong, giving targeted feedback for each iteration.</p>
+      </div>
+
+      <div class="card">
+        <p class="absent">check_references()</p>
+        <p style="font-size:0.88rem; margin-top:6px;">Would return rule IDs, counts, and structural summary — leaking information about the current state that compile_check intentionally withholds.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 5: Scoring -->
+<div class="slide">
+  <div class="label">04 · Scoring — How We Measure Correctness</div>
+  <h2>Behavioral equivalence: 2000 scenarios, 95% threshold</h2>
+
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <h3>How a task is scored</h3>
+        <div class="gen-step">
+          <div class="gen-num">1</div>
+          <div>
+            <div class="gen-title">Compile both policies</div>
+            <div class="gen-desc">The model's submitted YAML and the hidden gold YAML are both parsed into executable decision functions by the same compiler.</div>
+          </div>
+        </div>
+        <div class="gen-step">
+          <div class="gen-num">2</div>
+          <div>
+            <div class="gen-title">Sample 2,000 scenarios</div>
+            <div class="gen-desc">Random combinations of all domain variables (customer_tier, purchase_channel, item_condition, etc.) are drawn from a fixed seed. Same 2,000 scenarios every time.</div>
+          </div>
+        </div>
+        <div class="gen-step">
+          <div class="gen-num">3</div>
+          <div>
+            <div class="gen-title">Compare decisions</div>
+            <div class="gen-desc">Each scenario is evaluated against both policies. The score is the fraction where they agree: <code>score = matches / 2000</code>.</div>
+          </div>
+        </div>
+        <div class="gen-step">
+          <div class="gen-num">4</div>
+          <div>
+            <div class="gen-title">Pass/fail threshold: 95%</div>
+            <div class="gen-desc">A task passes if <code>score ≥ 0.95</code> (at least 1,900 of 2,000 scenarios agree). Fail = score &lt; 0.95.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Why these specific numbers?</h3>
+
+      <div class="fmode" style="margin-bottom:14px;">
+        <div class="fmode-name" style="background:rgba(99,102,241,0.15); color:var(--accent2)">Why 2,000 scenarios?</div>
+        <p>The variable space for each domain has thousands of possible combinations. 2,000 samples gives statistical power to detect even moderate error rates (a policy wrong on 5% of cases will fail ~100 out of 2,000 checks). It is large enough to be reliable and small enough to run in under a second. The seed is fixed so results are fully reproducible.</p>
+      </div>
+
+      <div class="fmode" style="margin-bottom:14px;">
+        <div class="fmode-name" style="background:rgba(34,197,94,0.15); color:var(--green)">Why 95% — not 75%, 85%, or 90%?</div>
+        <p><strong>The key observation:</strong> a wrong priority swap doesn't fail one scenario — it fails every scenario where both conflicting rules match. That's a region, not a point. We looked at every failed task in our results and measured how many mismatches each wrong-priority error actually produced:</p>
+        <div style="display:flex; gap:12px; margin:10px 0; flex-wrap:wrap;">
+          <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:8px 14px; font-size:0.85rem;">
+            <div style="font-weight:700; color:var(--red);">Smallest error observed</div>
+            <div>~200 mismatches = <strong>10%</strong> of scenarios</div>
+          </div>
+          <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:8px 14px; font-size:0.85rem;">
+            <div style="font-weight:700; color:var(--red);">Largest error observed</div>
+            <div>1,326 mismatches = <strong>66%</strong> of scenarios</div>
+          </div>
+          <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:8px 14px; font-size:0.85rem;">
+            <div style="font-weight:700; color:var(--red);">Typical error</div>
+            <div>400–700 mismatches = <strong>20–35%</strong> of scenarios</div>
+          </div>
+        </div>
+        <p style="margin-top:8px;"><strong>This directly sets the threshold.</strong> Even the gentlest real priority error drops the score to ~0.90. So:</p>
+        <ul class="clean" style="margin-top:6px; font-size:0.88rem;">
+          <li><strong>75% / 85%</strong> — a model could miss 2–3 priority swaps and still pass. Not measuring global coherence at all.</li>
+          <li><strong>90%</strong> — a model that misses exactly one "small" priority swap (10% overlap) scores exactly 0.90 and passes. The benchmark misses the failure it was designed to catch.</li>
+          <li><strong style="color:var(--green);">95%</strong> — any real priority error (minimum 10% mismatches → score ≤ 0.90) guarantees failure. Meanwhile, 95% still forgives genuine ambiguity: two non-interacting rules that could be assigned priority 8 or 9 interchangeably are behaviorally identical and don't affect the score.</li>
+        </ul>
+        <p style="margin-top:8px;"><strong>95% is the exact crossing point</strong> where "passed" and "got every meaningful swap right" become the same statement. One meaningful error → guaranteed fail. Genuine equivalent orderings → still pass.</p>
+      </div>
+
+      <div class="callout callout-blue">
+        <p><strong>No LLM judge. No rubric. No partial credit.</strong> The score is exact and deterministic — given any two policies and any seed, the score is always the same. This makes results fully reproducible and comparable across models.</p>
+      </div>
+
+      <div class="fmode" style="margin-top:14px;">
+        <div class="fmode-name" style="background:rgba(251,191,36,0.15); color:var(--orange)">Where does the gold policy come from?</div>
+        <p>The gold is <strong>not labeled by a human</strong>. Our Python code applies each update directly to the rule graph (e.g. swap two priority integers, delete a rule). The gold is the result of calling <code>graph.to_yaml()</code> on the final mutated Python object. It's mechanically derived — then verified by scoring it against itself (must achieve 2000/2000) before any task is accepted.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 5b: Scenario examples -->
+<div class="slide">
+  <div class="label">Scoring in Practice — What a Scenario Looks Like</div>
+  <h2>Each of the 2,000 scenarios is a concrete row of variable values → one decision</h2>
+  <p style="margin-bottom:20px;">Here are real examples from the refund domain (task_0000). Each row is evaluated against both the gold policy and the submitted policy. The fraction that agree is the score.</p>
+
+  <!-- What a scenario IS -->
+  <div class="card" style="margin-bottom:20px; border-color:var(--accent);">
+    <h3>What one scenario contains (refund domain)</h3>
+    <div style="display:flex; gap:32px; flex-wrap:wrap; margin-top:8px;">
+      <div><span style="color:var(--accent2); font-family:monospace; font-size:0.88rem;">customer_tier</span><br><span style="color:var(--muted); font-size:0.82rem;">platinum / gold / silver / standard</span></div>
+      <div><span style="color:var(--accent2); font-family:monospace; font-size:0.88rem;">purchase_channel</span><br><span style="color:var(--muted); font-size:0.82rem;">online / phone / in_store</span></div>
+      <div><span style="color:var(--accent2); font-family:monospace; font-size:0.88rem;">item_condition</span><br><span style="color:var(--muted); font-size:0.82rem;">unopened / opened / defective</span></div>
+      <div><span style="color:var(--accent2); font-family:monospace; font-size:0.88rem;">purchase_age_days</span><br><span style="color:var(--muted); font-size:0.82rem;">integer (e.g. 5, 45, 90, 150)</span></div>
+      <div><span style="color:var(--accent2); font-family:monospace; font-size:0.88rem;">item_price</span><br><span style="color:var(--muted); font-size:0.82rem;">integer (e.g. 50, 100, 250)</span></div>
+      <div><span style="color:var(--accent2); font-family:monospace; font-size:0.88rem;">is_final_sale</span><br><span style="color:var(--muted); font-size:0.82rem;">True / False</span></div>
+    </div>
+    <p style="margin-top:10px; font-size:0.83rem;">The 2,000 scenarios are random draws from this variable space, using a fixed seed so every run produces the exact same 2,000 rows. One decision is produced per scenario by whichever rule has the highest priority and whose conditions are all satisfied.</p>
+  </div>
+
+  <!-- 3 scenario examples -->
+  <div class="three-col">
+    <!-- Scenario A: MATCH -->
+    <div class="card green">
+      <div style="font-size:0.72rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:10px;">✓ Scenario A — MATCH</div>
+      <pre style="font-size:0.78rem; margin-bottom:12px;">tier:     standard
+channel:  online
+cond:     defective
+age:      75 days
+price:    $50
+final:    False</pre>
+      <div class="kv" style="font-size:0.82rem;"><span class="kv-k">Gold decision</span><span style="color:var(--green); font-weight:700;">escalate_to_manager</span></div>
+      <div class="kv" style="font-size:0.82rem;"><span class="kv-k">Model decision</span><span style="color:var(--green); font-weight:700;">escalate_to_manager</span></div>
+      <p style="margin-top:10px; font-size:0.8rem; color:var(--muted);">Both policies agree — online channel at priority 12 fires. This scenario counts as a match toward the score.</p>
+    </div>
+
+    <!-- Scenario B: wrong_priority -->
+    <div class="card orange">
+      <div style="font-size:0.72rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:var(--orange); margin-bottom:10px;">✗ Scenario B — wrong_priority</div>
+      <pre style="font-size:0.78rem; margin-bottom:12px;">tier:     platinum
+channel:  online
+cond:     defective
+age:      45 days
+price:    $80
+final:    False</pre>
+      <div class="kv" style="font-size:0.82rem;"><span class="kv-k">Gold decision</span><span style="color:var(--green); font-weight:700;">deny_refund</span></div>
+      <div class="kv" style="font-size:0.82rem;"><span class="kv-k">Model decision</span><span style="color:var(--red); font-weight:700;">escalate_to_manager</span></div>
+      <p style="margin-top:10px; font-size:0.8rem; color:var(--muted);">Gold: platinum rule (priority 13) beats online rule (priority 12). Model gave the platinum rule the wrong priority — online rule won instead. Wrong answer.</p>
+    </div>
+
+    <!-- Scenario C: stale_rule_retained -->
+    <div class="card red">
+      <div style="font-size:0.72rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:10px;">✗ Scenario C — stale_rule_retained</div>
+      <pre style="font-size:0.78rem; margin-bottom:12px;">tier:     platinum
+channel:  phone
+cond:     defective
+age:      75 days
+price:    $100
+final:    True</pre>
+      <div class="kv" style="font-size:0.82rem;"><span class="kv-k">Gold decision</span><span style="color:var(--green); font-weight:700;">deny_refund</span></div>
+      <div class="kv" style="font-size:0.82rem;"><span class="kv-k">Model decision</span><span style="color:var(--red); font-weight:700;">offer_store_credit</span></div>
+      <p style="margin-top:10px; font-size:0.8rem; color:var(--muted);">The model kept a rule that update 3 revoked (platinum + defective → approve). That stale rule has high priority and fires here, producing the wrong decision.</p>
+    </div>
+  </div>
+
+  <div class="callout callout-blue" style="margin-top:20px;">
+    <p><strong>How the final score is computed:</strong> Run all 2,000 scenarios through both policies. Count how many produce the same decision. Score = count / 2,000. Task_0000 scored 732/2,000 = <strong>0.366</strong>. This means for 63.4% of all possible customer situations, the submitted policy gave the wrong answer.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 6: Generation -->
+<div class="slide">
+  <div class="label">05 · How Test Cases Are Generated</div>
+  <h2>Each task is built from a latent rule graph the model never sees</h2>
+
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <h3>Generation pipeline</h3>
+        <div class="gen-step">
+          <div class="gen-num">1</div>
+          <div>
+            <div class="gen-title">Pick a domain</div>
+            <div class="gen-desc">One of 4 domains: <strong>refund</strong>, <strong>approval</strong>, <strong>access_control</strong>, <strong>escalation</strong>. Each has its own variables, decision types, and definition templates.</div>
+          </div>
+        </div>
+        <div class="gen-step">
+          <div class="gen-num">2</div>
+          <div>
+            <div class="gen-title">Build the initial rule graph (12–16 rules)</div>
+            <div class="gen-desc">Random conditions over domain variables, random decisions, 40% chance of override relationships. Numeric conditions reference shared definitions.</div>
+          </div>
+        </div>
+        <div class="gen-step">
+          <div class="gen-num">3</div>
+          <div>
+            <div class="gen-title">Python mutates the graph directly</div>
+            <div class="gen-desc">For each update in the skeleton, <strong>Python code mutates the rule graph first</strong> — e.g. <code>rule_a["priority"], rule_b["priority"] = rule_b["priority"], rule_a["priority"]</code> for a swap, or <code>graph.rules.pop(id)</code> for a revocation. <em>Then</em> a natural-language memo is generated as a description of what just happened. The sentences are outputs, not inputs.</div>
+          </div>
+        </div>
+        <div class="gen-step">
+          <div class="gen-num">4</div>
+          <div>
+            <div class="gen-title">Memos sent to model. Graph stays hidden.</div>
+            <div class="gen-desc">The agent only receives the initial YAML and the memo sentences. It must figure out what YAML changes the memos imply — the model is doing the hard part. The latent graph (ground truth) is never shown.</div>
+          </div>
+        </div>
+        <div class="gen-step">
+          <div class="gen-num">5</div>
+          <div>
+            <div class="gen-title">Gold policy = graph.to_yaml() after all mutations</div>
+            <div class="gen-desc">The gold is produced by calling <code>to_yaml()</code> on the final mutated Python object. No human labeled it. It is verified by running it through the same scorer — gold must score 2000/2000 against itself before the task is accepted.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Quality filters applied to every task</h3>
+      <ul class="clean">
+        <li><strong>Behavioral gap filter</strong> — skip if the initial (uneditied) policy already scores ≥ 85% against gold. The task must require meaningful changes.</li>
+        <li><strong>Gold self-check</strong> — verify gold achieves 2000/2000 against itself. Catches generator bugs.</li>
+        <li><strong>Ambiguity filter</strong> — reject any memo containing vague words ("generally", "usually", "where appropriate"). All descriptions must be unambiguous.</li>
+        <li><strong>Uniform surface form</strong> — all update types produce the same memo format. The model cannot identify add vs. revoke vs. swap from wording.</li>
+      </ul>
+
+      <div class="three-col" style="margin-top:20px; gap:12px;">
+        <div class="card" style="text-align:center; padding:16px 10px;">
+          <div class="big-stat indigo" style="font-size:2rem;">4</div>
+          <div class="stat-label">domains</div>
+        </div>
+        <div class="card" style="text-align:center; padding:16px 10px;">
+          <div class="big-stat indigo" style="font-size:2rem;">∞</div>
+          <div class="stat-label">task space</div>
+        </div>
+        <div class="card" style="text-align:center; padding:16px 10px;">
+          <div class="big-stat indigo" style="font-size:2rem;">~30</div>
+          <div class="stat-label">lines to add a domain</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 6b: Task breakdown -->
+<div class="slide">
+  <div class="label">The 20 Benchmark Tasks — Exact Breakdown</div>
+  <h2>How the 20 tasks were structured and distributed</h2>
+  <p style="margin-bottom:20px;">All 20 tasks are ultra-hard tier. Every task uses the same update skeleton (3 priority swaps + 2 revocations + 1 chain_create + 1 chain_ref + 1 no-op). What varies across seeds: domain, n_rules, n_updates, specific conditions, decisions, and definition values.</p>
+
+  <div class="two-col">
+    <div>
+      <!-- Per-task table -->
+      <table style="font-size:0.82rem;">
+        <thead><tr><th>Task</th><th>Domain</th><th>Rules</th><th>Updates</th><th>Update skeleton (every task)</th></tr></thead>
+        <tbody>
+          <tr><td>task_0000</td><td>refund</td><td>12</td><td>8</td><td rowspan="20" style="vertical-align:middle; color:var(--muted); font-size:0.78rem; padding:12px;">
+            <strong style="color:var(--text); display:block; margin-bottom:8px;">Fixed skeleton per task:</strong>
+            <span style="color:var(--accent2);">chain_create</span> → adds new rule<br>
+            <span style="color:var(--orange);">change_priority</span> → swap #1<br>
+            <span style="color:var(--red);">revoke_rule</span> → deletion #1<br>
+            <span style="color:var(--cyan);">chain_ref</span> → modifies chain rule<br>
+            <span style="color:var(--orange);">change_priority</span> → swap #2<br>
+            <span style="color:var(--red);">revoke_rule</span> → deletion #2<br>
+            <span style="color:var(--orange);">change_priority</span> → swap #3<br>
+            <span style="color:var(--muted);">no_op_disguised</span> → fake update<br>
+            <em style="color:var(--muted); font-size:0.75rem;">(+ 1–2 extra slots for 9–10 update tasks)</em>
+          </td></tr>
+          <tr><td>task_0001</td><td>approval</td><td>13</td><td>9</td></tr>
+          <tr><td>task_0002</td><td>access_control</td><td>14</td><td>10</td></tr>
+          <tr><td>task_0003</td><td>escalation</td><td>15</td><td>8</td></tr>
+          <tr><td>task_0004</td><td>refund</td><td>16</td><td>9</td></tr>
+          <tr><td>task_0005</td><td>approval</td><td>12</td><td>10</td></tr>
+          <tr><td>task_0006</td><td>access_control</td><td>13</td><td>8</td></tr>
+          <tr><td>task_0007</td><td>escalation</td><td>14</td><td>9</td></tr>
+          <tr><td>task_0008</td><td>refund</td><td>15</td><td>10</td></tr>
+          <tr><td>task_0009</td><td>approval</td><td>16</td><td>8</td></tr>
+          <tr><td>task_0010</td><td>escalation</td><td>13</td><td>10</td></tr>
+          <tr><td>task_0011</td><td>refund</td><td>14</td><td>8</td></tr>
+          <tr><td>task_0012</td><td>access_control</td><td>16</td><td>10</td></tr>
+          <tr><td>task_0013</td><td>escalation</td><td>12</td><td>8</td></tr>
+          <tr><td>task_0014</td><td>refund</td><td>13</td><td>9</td></tr>
+          <tr><td>task_0015</td><td>escalation</td><td>16</td><td>9</td></tr>
+          <tr><td>task_0016</td><td>refund</td><td>12</td><td>10</td></tr>
+          <tr><td>task_0017</td><td>approval</td><td>13</td><td>8</td></tr>
+          <tr><td>task_0018</td><td>access_control</td><td>14</td><td>9</td></tr>
+          <tr><td>task_0019</td><td>escalation</td><td>15</td><td>10</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <h3>Domain distribution</h3>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="kv"><span class="kv-k">refund</span><span class="kv-v">6 tasks (task_0000, 04, 08, 11, 14, 16)</span></div>
+        <div class="kv"><span class="kv-k">escalation</span><span class="kv-v">6 tasks (task_0003, 07, 10, 13, 15, 19)</span></div>
+        <div class="kv"><span class="kv-k">approval</span><span class="kv-v">4 tasks (task_0001, 05, 09, 17)</span></div>
+        <div class="kv"><span class="kv-k">access_control</span><span class="kv-v">4 tasks (task_0002, 06, 12, 18)</span></div>
+      </div>
+
+      <h3>What varies across seeds</h3>
+      <ul class="clean">
+        <li>Which domain variables appear in conditions (e.g., customer_tier vs. ticket_age)</li>
+        <li>Specific condition thresholds (e.g., <code>age &gt; 30</code> vs. <code>age &gt; 90</code>)</li>
+        <li>Which rules get created, revoked, or swapped in each update</li>
+        <li>Initial priority ordering (12 → 16 rules, each assigned different starting priorities)</li>
+        <li>Decision vocabulary (approve_refund vs. escalate_to_L2 vs. grant_access)</li>
+      </ul>
+
+      <h3 style="margin-top:16px;">What is constant across all 20 tasks</h3>
+      <ul class="clean">
+        <li>Update skeleton structure: exactly 3 swaps + 2 revocations guaranteed</li>
+        <li>Scoring mechanism: 2,000 scenarios, 95% pass threshold</li>
+        <li>Tool set: same 5 tools, same no-oracle constraint</li>
+        <li>Surface form: all memos use identical "When [conditions], [decision]." format</li>
+        <li>No operation-type labels visible to the model</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 7: Failure modes -->
+<div class="slide">
+  <div class="label">06 · Failure Modes — How Models Break</div>
+  <h2>3 precise, mechanistic failure categories</h2>
+  <p>Every mismatch between the submitted policy and the gold policy is classified into one of these three categories. This is not a rubric — it is derived mechanically by comparing rule structures and identifying <em>why</em> the decision differed for each failing scenario.</p>
+
+  <div class="three-col" style="margin-top:28px;">
+    <div class="fmode">
+      <div class="fmode-name fm-p">wrong_priority</div>
+      <p><strong>What it is:</strong> A scenario was matched by multiple rules. The wrong rule won because its priority number was incorrect in the submitted policy.</p>
+      <p><strong>Root cause:</strong> The model failed to track how 3 priority swaps — applied after mid-stream adds and revocations — reshaped the global ranking.</p>
+      <div class="callout callout-orange" style="margin-top:10px;">
+        <p><strong>Most common.</strong> Appears in <strong>100% of failed tasks</strong>. When you revoke 2 rules and then swap 3 pairs, the final ordering is completely different from what the model computed.</p>
+      </div>
+      <div class="example" style="margin-top:10px; font-size:0.82rem; color:var(--muted);">Example: task_0000 — 591 scenarios wrong because priority arithmetic collapsed after 3 swaps.</div>
+    </div>
+
+    <div class="fmode">
+      <div class="fmode-name fm-s">stale_rule_retained</div>
+      <p><strong>What it is:</strong> A rule that was revoked by an update still appears in the submitted policy. It matches scenarios it should no longer cover, producing wrong decisions.</p>
+      <p><strong>Root cause:</strong> The uniform memo surface form makes revocations look identical to modifications. The model fails to recognise which updates are deletions.</p>
+      <div class="callout callout-red" style="margin-top:10px;">
+        <p><strong>Second most common.</strong> Appears in ~80% of failed tasks. A retained stale rule typically has high priority, making it dominate large portions of the scenario space.</p>
+      </div>
+      <div class="example" style="margin-top:10px; font-size:0.82rem; color:var(--muted);">Example: task_0001 — 518 scenarios wrong because one revoked rule was kept with priority 7.</div>
+    </div>
+
+    <div class="fmode">
+      <div class="fmode-name fm-d">wrong_decision</div>
+      <p><strong>What it is:</strong> A rule has the correct conditions and correct priority — but its decision field is wrong. The model identified the right rule but applied the wrong outcome.</p>
+      <p><strong>Root cause:</strong> Usually a missed chain_ref — an update that changed the decision of an earlier rule (chain dependency tracking failure).</p>
+      <div class="callout callout-blue" style="margin-top:10px;">
+        <p><strong>Least common.</strong> Models are generally good at tracking decision changes. Appears in ~15% of failed tasks, usually alongside priority errors.</p>
+      </div>
+      <div class="example" style="margin-top:10px; font-size:0.82rem; color:var(--muted);">Example: task_0010 — 62 scenarios wrong because update 9 (second chain_ref) changed a decision that the model missed.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 8: Example 1 -->
+<div class="slide">
+  <div class="label">07 · Example 1 — Severe Failure</div>
+  <h2>Task #0000 · Refund domain · Score: 0.366</h2>
+  <p style="margin-bottom:16px;">12 rules, 8 updates. The model made one edit and submitted. It missed two revocations and got all three priority swaps wrong.</p>
+
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <h3>Update stream (what the model received — all look the same)</h3>
+        <ul class="update-list">
+          <li><div class="unum">1</div><span class="utag t-add">ADD</span><div class="utext">Situations in which the customer tier is platinum are to be handled as: escalate to a manager.</div></li>
+          <li><div class="unum">2</div><span class="utag t-swap">SWAP</span><div class="utext">Where phone + final sale active + price ≤ 100 + platinum + defective overlap — offer store credit wins.</div></li>
+          <li><div class="unum">3</div><span class="utag t-revoke">REVOKE</span><div class="utext">The separate handling for cases where the customer tier is platinum, and the item condition is defective has been removed.</div></li>
+          <li><div class="unum">4</div><span class="utag t-modify">MODIFY</span><div class="utext">Where the customer tier is platinum applies, the outcome is deny the refund.</div></li>
+          <li><div class="unum">5</div><span class="utag t-swap">SWAP</span><div class="utext">When purchase age &lt; 100, channel in online/in_store, tier = silver and channel = phone/in_store both hold — request documentation wins.</div></li>
+          <li><div class="unum">6</div><span class="utag t-revoke">REVOKE</span><div class="utext">No distinct rule governs cases where the final sale status is not active, and the customer tier is platinum or silver.</div></li>
+          <li><div class="unum">7</div><span class="utag t-swap">SWAP</span><div class="utext">Cases satisfying both [purchase age &lt; 100, online/in_store, silver] and [online, defective, age &gt; 60] result in request documentation, not approve the refund.</div></li>
+          <li><div class="unum">8</div><span class="utag t-noop">NO-OP</span><div class="utext">Cases where the purchase channel is phone or in store should result in offer store credit.</div></li>
+        </ul>
+        <p style="font-size:0.78rem; margin-top:10px; color:var(--muted);">↑ The model saw uniform text. The coloured tags above are for explanation only — the model receives no operation-type labels.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <h3>Model trajectory (5 tool calls)</h3>
+        <div class="traj">
+          <div class="traj-step"><div class="t-icon">1</div><div><div class="t-tool">read_policy()</div><div class="t-result">12 rules loaded</div></div></div>
+          <div class="traj-step"><div class="t-icon">2</div><div><div class="t-tool">read_updates()</div><div class="t-result">8 updates loaded</div></div></div>
+          <div class="traj-step"><div class="t-icon">3</div><div><div class="t-tool">edit_policy(...)</div><div class="t-result ok">{"status": "ok"} — but the edit was wrong</div></div></div>
+          <div class="traj-step"><div class="t-icon">4</div><div><div class="t-tool">compile_check()</div><div class="t-result ok">{"status": "ok"} — YAML was syntactically valid</div></div></div>
+          <div class="traj-step"><div class="t-icon">5</div><div><div class="t-tool">submit()</div><div class="t-result err">final_score: 0.366 — 1,268 of 2,000 scenarios wrong</div></div></div>
+        </div>
+      </div>
+
+      <div class="pills">
+        <span class="pill pill-p">wrong_priority: 591 scenarios</span>
+        <span class="pill pill-s">stale_rule_retained: 677 scenarios</span>
+      </div>
+
+      <div class="score-bar" style="margin-top:14px;">
+        <div class="score-bar-top"><span>Behavioral score</span><span style="color:var(--red); font-weight:700;">0.366 — FAIL</span></div>
+        <div class="score-bar-bg"><div class="bar-fill bar-red" style="width:36.6%"></div></div>
+      </div>
+
+      <div class="callout callout-red" style="margin-top:14px;">
+        <p><strong>What went wrong:</strong> The model correctly added the platinum rule (update 1) and changed its decision (update 4), but failed to delete the two revoked rules (updates 3 and 6) and got the final priority ordering wrong for 7 rules after the three swaps. Priority arithmetic collapsed under the cumulative pressure of adds + revokes + swaps.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 9: Example 2 -->
+<div class="slide">
+  <div class="label">08 · Example 2 — Chain Dependency Failure</div>
+  <h2>Task #0007 · Escalation domain · Score: 0.630</h2>
+  <p style="margin-bottom:16px;">14 rules, 9 updates. The model submitted without editing at all — it couldn't track what needed to change and gave up.</p>
+
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <h3>Update stream (9 updates with 2 chain_refs to the same rule)</h3>
+        <ul class="update-list">
+          <li><div class="unum">1</div><span class="utag t-add">ADD</span><div class="utext">Cases where the ticket age (in hours) is at most 24 should result in escalate to L2 support.</div></li>
+          <li><div class="unum">2</div><span class="utag t-swap">SWAP</span><div class="utext">Ticket age ≤ 72 vs. previous escalations ≥ 4 AND age ≤ 24 — page_oncall wins.</div></li>
+          <li><div class="unum">3</div><span class="utag t-revoke">REVOKE</span><div class="utext">The separate handling for ticket_age ≤ 8 and security_classification = not active has been removed.</div></li>
+          <li><div class="unum">4</div><span class="utag t-modify">MODIFY</span><div class="utext">When the ticket age (in hours) is at most 24, take no action. <em style="color:var(--muted)">(changes decision of rule from update 1)</em></div></li>
+          <li><div class="unum">5</div><span class="utag t-swap">SWAP</span><div class="utext">Customer tier + severity + revenue impact vs. ticket_age ≤ 24 — take no action wins.</div></li>
+          <li><div class="unum">6</div><span class="utag t-revoke">REVOKE</span><div class="utext">Cases where ticket_age ≤ 24, revenue_impact = active, security = active are no longer subject to a separate rule.</div></li>
+          <li><div class="unum">7</div><span class="utag t-swap">SWAP</span><div class="utext">Previous escalations &lt; 4 vs ≥ 4 — no_action wins.</div></li>
+          <li><div class="unum">8</div><span class="utag t-noop">NO-OP</span><div class="utext">Where ticket age ≤ 72 applies, the outcome is page the on-call engineer.</div></li>
+          <li><div class="unum">9</div><span class="utag t-modify">MODIFY</span><div class="utext">Where the ticket age (in hours) is at most 24 applies, the outcome is page the on-call engineer. <em style="color:var(--muted)">(changes decision again)</em></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <h3>Model trajectory (only 3 tool calls — never edited)</h3>
+        <div class="traj">
+          <div class="traj-step"><div class="t-icon">1</div><div><div class="t-tool">read_policy()</div><div class="t-result">14 rules loaded</div></div></div>
+          <div class="traj-step"><div class="t-icon">2</div><div><div class="t-tool">read_updates()</div><div class="t-result">9 updates loaded</div></div></div>
+          <div class="traj-step"><div class="t-icon">3</div><div><div class="t-tool">submit()</div><div class="t-result err">final_score: 0.630 — submitted original unedited policy</div></div></div>
+        </div>
+        <div class="callout callout-red" style="margin-top:12px;">
+          <p><strong>The model gave up.</strong> After reading the policy and updates, it submitted the unmodified initial policy without making any changes — getting credit only for scenarios the original policy already handled correctly.</p>
+        </div>
+      </div>
+
+      <div class="pills">
+        <span class="pill pill-p">wrong_priority: 620 scenarios</span>
+        <span class="pill pill-s">stale_rule_retained: 121 scenarios</span>
+      </div>
+
+      <div class="score-bar" style="margin-top:14px;">
+        <div class="score-bar-top"><span>Behavioral score</span><span style="color:var(--orange); font-weight:700;">0.630 — FAIL</span></div>
+        <div class="score-bar-bg"><div class="bar-fill bar-orange" style="width:63%"></div></div>
+      </div>
+
+      <div class="callout callout-orange" style="margin-top:12px;">
+        <p><strong>Why this is a distinct failure mode:</strong> The chain dependency (update 1 creates a rule → updates 4 and 9 both modify the same rule's decision) combined with three priority swaps overwhelmed the model's ability to plan an edit. It recognised the task was complex and declined to attempt it.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 10: Example 3 -->
+<div class="slide">
+  <div class="label">09 · Example 3 — Correct Solution</div>
+  <h2>Task #0003 · Escalation domain · Score: 1.000</h2>
+  <p style="margin-bottom:16px;">15 rules, 8 updates. The model tracked all changes correctly and submitted a policy with 2,000 / 2,000 scenario agreements.</p>
+
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <h3>What the model did right (step by step)</h3>
+        <ul class="clean">
+          <li>Identified update 1 as a new rule creation — added a rule for <code>ticket_age ≤ 24 → escalate_to_L2</code> at a new priority</li>
+          <li>Recognised update 4 as a decision change on the rule from update 1 — updated only its decision field, not its conditions or priority</li>
+          <li>Resolved all 3 priority swaps by computing the correct final ranking: incremented the winning rule's priority above the losing rule's for each pair</li>
+          <li>Removed both revoked rules (updates 3 and 6) entirely from the YAML</li>
+          <li>Correctly identified update 8 as a no-op — the described behavior was already covered by an existing rule, so made no structural change</li>
+          <li>Edited once, compiled, and submitted with confidence</li>
+        </ul>
+
+        <div class="callout callout-green" style="margin-top:14px;">
+          <p><strong>Reasoning pattern:</strong> The model built a running priority table in its thinking, tracking "if I move rule X up, what does that do to rules Y and Z?" — mentally simulating the full cumulative state before making any edit. This is the pattern the benchmark is designed to reward.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <h3>Model trajectory (5 tool calls)</h3>
+        <div class="traj">
+          <div class="traj-step"><div class="t-icon">1</div><div><div class="t-tool">read_policy()</div><div class="t-result">15 rules, 4 definitions</div></div></div>
+          <div class="traj-step"><div class="t-icon">2</div><div><div class="t-tool">read_updates()</div><div class="t-result">8 updates loaded</div></div></div>
+          <div class="traj-step"><div class="t-icon">3</div><div><div class="t-tool">edit_policy(...)</div><div class="t-result ok">{"status": "ok"}</div></div></div>
+          <div class="traj-step"><div class="t-icon">4</div><div><div class="t-tool">compile_check()</div><div class="t-result ok">{"status": "ok"}</div></div></div>
+          <div class="traj-step"><div class="t-icon">5</div><div><div class="t-tool">submit()</div><div class="t-result ok">final_score: 1.000 — 2,000 / 2,000 scenarios correct</div></div></div>
+        </div>
+      </div>
+
+      <div class="score-bar" style="margin-top:8px;">
+        <div class="score-bar-top"><span>Behavioral score</span><span style="color:var(--green); font-weight:700;">1.000 — PASS ✓</span></div>
+        <div class="score-bar-bg"><div class="bar-fill bar-green" style="width:100%"></div></div>
+      </div>
+
+      <div class="card" style="margin-top:14px; border-color:var(--green);">
+        <h3 style="color:var(--green)">Key difference from the failures</h3>
+        <p style="font-size:0.88rem;">The model did not apply updates one by one and submit after each. It read everything first, simulated all mutations together in its reasoning, produced one correct edit, and submitted. Global simulation — not local iteration.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 12: Results -->
+<div class="slide">
+  <div class="label">Results — Both Models, All Tasks</div>
+  <h2>Full per-task breakdown across both benchmark runs</h2>
+
+  <!-- Summary comparison -->
+  <div class="two-col" style="margin-bottom:20px; gap:16px;">
+    <div class="card" style="border-color:rgba(99,102,241,0.5); padding:16px 20px;">
+      <div style="font-size:0.72rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:8px;">Anthropic — claude-sonnet-4-6 · 18 tasks</div>
+      <div style="display:flex; gap:28px;">
+        <div><span class="big-stat red" style="font-size:1.9rem;">16.7%</span><div class="stat-label">pass (3/18)</div></div>
+        <div><span class="big-stat indigo" style="font-size:1.9rem;">0.772</span><div class="stat-label">avg score</div></div>
+        <div><span class="big-stat" style="font-size:1.9rem; color:var(--cyan);">4.7</span><div class="stat-label">avg tools</div></div>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(6,182,212,0.5); padding:16px 20px;">
+      <div style="font-size:0.72rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:var(--cyan); margin-bottom:8px;">OpenAI — o3 (reasoning model) · 20 tasks</div>
+      <div style="display:flex; gap:28px;">
+        <div><span class="big-stat red" style="font-size:1.9rem;">10.0%</span><div class="stat-label">pass (2/20)</div></div>
+        <div><span class="big-stat orange" style="font-size:1.9rem;">0.650</span><div class="stat-label">avg score</div></div>
+        <div><span class="big-stat" style="font-size:1.9rem; color:var(--cyan);">4.4</span><div class="stat-label">avg tools</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Combined table -->
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+    <div>
+      <p style="font-size:0.78rem; font-weight:700; color:var(--accent2); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px;">claude-sonnet-4-6</p>
+      <table style="font-size:0.82rem;">
+        <thead><tr><th>Task</th><th>Domain</th><th>Score</th><th>Result</th><th style="font-size:0.7rem;">Top failure</th></tr></thead>
+        <tbody>
+          <tr><td>task_0000</td><td>refund</td><td>0.366</td><td class="fail">FAIL</td><td>priority+stale</td></tr>
+          <tr><td>task_0001</td><td>approval</td><td>0.741</td><td class="fail">FAIL</td><td>stale: 518</td></tr>
+          <tr><td>task_0002</td><td>access_control</td><td>0.922</td><td class="fail">FAIL</td><td>priority: 155</td></tr>
+          <tr class="row-highlight"><td>task_0003</td><td>escalation</td><td>1.000</td><td class="pass">PASS</td><td>—</td></tr>
+          <tr><td>task_0004</td><td>refund</td><td>0.942</td><td class="fail">FAIL</td><td>stale: 116</td></tr>
+          <tr class="row-highlight"><td>task_0005</td><td>approval</td><td>0.991</td><td class="pass">PASS</td><td>priority: 18</td></tr>
+          <tr class="row-highlight"><td>task_0006</td><td>access_control</td><td>1.000</td><td class="pass">PASS</td><td>—</td></tr>
+          <tr><td>task_0007</td><td>escalation</td><td>0.630</td><td class="fail">FAIL</td><td>priority: 620</td></tr>
+          <tr><td>task_0008</td><td>refund</td><td>0.926</td><td class="fail">FAIL</td><td>stale: 147</td></tr>
+          <tr><td>task_0009</td><td>approval</td><td>0.829</td><td class="fail">FAIL</td><td>stale: 343</td></tr>
+          <tr><td>task_0010</td><td>escalation</td><td>0.870</td><td class="fail">FAIL</td><td>stale+priority</td></tr>
+          <tr><td>task_0011</td><td>refund</td><td>0.864</td><td class="fail">FAIL</td><td>stale: 273</td></tr>
+          <tr><td>task_0012</td><td>access_control</td><td>0.639</td><td class="fail">FAIL</td><td>stale: 722</td></tr>
+          <tr><td>task_0013</td><td>escalation</td><td>0.591</td><td class="fail">FAIL</td><td>stale+priority</td></tr>
+          <tr><td>task_0014</td><td>refund</td><td>0.697</td><td class="fail">FAIL</td><td>stale+priority</td></tr>
+          <tr><td>task_0015</td><td>escalation</td><td>0.776</td><td class="fail">FAIL</td><td>priority: 441</td></tr>
+          <tr><td>task_0016</td><td>refund</td><td>0.608</td><td class="fail">FAIL</td><td>priority: 659</td></tr>
+          <tr><td>task_0017</td><td>approval</td><td>0.508</td><td class="fail">FAIL</td><td>priority: 959</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <p style="font-size:0.78rem; font-weight:700; color:var(--cyan); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px;">OpenAI o3</p>
+      <table style="font-size:0.82rem;">
+        <thead><tr><th>Task</th><th>Domain</th><th>Score</th><th>Result</th><th style="font-size:0.7rem;">Top failure</th></tr></thead>
+        <tbody>
+          <tr><td>task_0000</td><td>refund</td><td>0.657</td><td class="fail">FAIL</td><td>stale: 685</td></tr>
+          <tr><td>task_0001</td><td>approval</td><td>0.464</td><td class="fail">FAIL</td><td>priority+stale</td></tr>
+          <tr><td>task_0002</td><td>access_control</td><td>0.777</td><td class="fail">FAIL</td><td>stale+priority</td></tr>
+          <tr><td>task_0003</td><td>escalation</td><td>0.568</td><td class="fail">FAIL</td><td>priority: 739</td></tr>
+          <tr><td>task_0004</td><td>refund</td><td>0.755</td><td class="fail">FAIL</td><td>priority+stale</td></tr>
+          <tr class="row-highlight"><td>task_0005</td><td>approval</td><td>0.993</td><td class="pass">PASS</td><td>priority: 14</td></tr>
+          <tr><td>task_0006</td><td>access_control</td><td>0.633</td><td class="fail">FAIL</td><td>priority: 729</td></tr>
+          <tr><td>task_0007</td><td>escalation</td><td>0.632</td><td class="fail">FAIL</td><td>stale: 523</td></tr>
+          <tr class="row-highlight"><td>task_0008</td><td>refund</td><td>0.990</td><td class="pass">PASS</td><td>priority: 19</td></tr>
+          <tr><td>task_0009</td><td>approval</td><td>0.771</td><td class="fail">FAIL</td><td>stale: 417</td></tr>
+          <tr><td>task_0010</td><td>escalation</td><td>0.857</td><td class="fail">FAIL</td><td>stale+priority</td></tr>
+          <tr><td>task_0011</td><td>refund</td><td>0.801</td><td class="fail">FAIL</td><td>stale: 398</td></tr>
+          <tr><td>task_0012</td><td>access_control</td><td>0.498</td><td class="fail">FAIL</td><td>stale+priority</td></tr>
+          <tr><td>task_0013</td><td>escalation</td><td>0.000</td><td class="fail">FAIL</td><td>submitted blank</td></tr>
+          <tr><td>task_0014</td><td>refund</td><td>0.715</td><td class="fail">FAIL</td><td>decision: 330</td></tr>
+          <tr><td>task_0015</td><td>escalation</td><td>0.757</td><td class="fail">FAIL</td><td>stale+priority</td></tr>
+          <tr><td>task_0016</td><td>refund</td><td>0.105</td><td class="fail">FAIL</td><td>priority: 1326</td></tr>
+          <tr><td>task_0017</td><td>approval</td><td>0.717</td><td class="fail">FAIL</td><td>priority: 556</td></tr>
+          <tr><td>task_0018</td><td>access_control</td><td>0.603</td><td class="fail">FAIL</td><td>stale+priority</td></tr>
+          <tr><td>task_0019</td><td>escalation</td><td>0.713</td><td class="fail">FAIL</td><td>stale+priority</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 13: How prompting works -->
+<div class="slide">
+  <div class="label">Prompting Architecture — How the API Calls Work</div>
+  <h2>One prompt with everything. Then a tool-call loop until submit.</h2>
+  <p>A common question: does the model get the initial policy in one prompt and then updates one-by-one? No. Here is the exact structure.</p>
+
+  <div class="two-col" style="margin-top:24px;">
+    <div>
+      <div class="card">
+        <h3>Step 1 — One system prompt (same for every task)</h3>
+        <pre style="font-size:0.75rem;">You are a policy maintenance agent.
+Your task is to update a YAML policy
+to correctly reflect a set of changes.
+
+CRITICAL: You have NO behavioral oracle.
+There is no run_tests() and no
+find_counterexample(). compile_check()
+tells you only whether YAML parses.
+edit_policy() returns only {"status":"ok"}.
+
+Think globally. Submit when confident.</pre>
+        <p style="margin-top:10px; font-size:0.85rem;">This is the model's "briefing." It explains the DSL semantics, the no-oracle constraint, and the reasoning discipline. It is sent once per conversation as the system prompt.</p>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h3>Step 2 — One user message with full context</h3>
+        <pre style="font-size:0.75rem;">## Domain
+refund
+
+## Your Task
+Modify the policy so it correctly
+reflects ALL updates.
+
+## Current Policy
+```yaml
+definitions:
+  standard_window: 60
+  ...
+rules:
+- id: r001
+  conditions: []
+  decision: request_documentation
+  priority: 1
+... (all 12–16 rules) ...
+```
+
+## Updates to Apply
+1. Situations in which the customer
+   tier is platinum are to be handled
+   as: escalate to a manager.
+2. Where the purchase channel is
+   phone ...
+... (all 8–10 updates) ...</pre>
+        <p style="margin-top:10px; font-size:0.85rem;"><strong>All updates are listed together in one message</strong> — not streamed one at a time. The model must process all 8–10 memos simultaneously and reason about their cumulative effect.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h3>Step 3 — Tool-call loop (model-driven)</h3>
+        <div class="traj">
+          <div class="traj-step">
+            <div class="t-icon">→</div>
+            <div>
+              <div class="t-tool">Model calls read_policy()</div>
+              <div class="t-result">Gets back the full YAML text (same as the prompt — serves as a re-read)</div>
+            </div>
+          </div>
+          <div class="traj-step">
+            <div class="t-icon">→</div>
+            <div>
+              <div class="t-tool">Model calls read_updates()</div>
+              <div class="t-result">Gets back the list of update strings (same as the prompt)</div>
+            </div>
+          </div>
+          <div class="traj-step">
+            <div class="t-icon">→</div>
+            <div>
+              <div class="t-tool">Model calls edit_policy(new_yaml)</div>
+              <div class="t-result">Returns {"status":"ok"} — no feedback on correctness</div>
+            </div>
+          </div>
+          <div class="traj-step">
+            <div class="t-icon">→</div>
+            <div>
+              <div class="t-tool">Model calls compile_check()</div>
+              <div class="t-result">Returns ok or syntax error — nothing about behavior</div>
+            </div>
+          </div>
+          <div class="traj-step">
+            <div class="t-icon">→</div>
+            <div>
+              <div class="t-tool">Model calls submit()</div>
+              <div class="t-result">Score revealed. Conversation ends.</div>
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-orange" style="margin-top:14px;">
+          <p><strong>The model drives the loop.</strong> It decides which tools to call, in what order, and when to submit. Most successful runs used exactly 5 calls: read_policy → read_updates → edit_policy → compile_check → submit. Failed runs sometimes skipped the edit or made multiple edits without behavioral feedback to guide them.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px; border-color:var(--cyan);">
+        <h3>Why give read_policy + read_updates as tools if the content is already in the prompt?</h3>
+        <p style="font-size:0.88rem;">Two reasons: (1) it gives the model an explicit "re-read" action that some models use to re-anchor their context before editing; (2) it creates a realistic tool-use environment — in production, an agent would not have the policy pre-loaded but would fetch it. The prompt version is the agent's initial context; the tool version is the canonical source during the conversation.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 14: Prototype implementation -->
+<div class="slide">
+  <div class="label">Prototype Implementation — What Was Built</div>
+  <h2>6 runnable files. All independently testable.</h2>
+
+  <div class="two-col">
+    <div>
+      <table>
+        <thead><tr><th>File</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td><code>task_generator.py</code></td><td>Latent rule graph → initial policy + update stream + gold policy. Contains domain definitions, update skeleton builder, all description templates.</td></tr>
+          <tr><td><code>compiler.py</code></td><td>Parses YAML text → Policy object. Validates conditions, resolves definitions, builds an executable rule engine.</td></tr>
+          <tr><td><code>verifier.py</code></td><td>Behavioral equivalence tester. Takes two policies, samples 2,000 scenarios, returns score + failure breakdown per mismatch.</td></tr>
+          <tr><td><code>agent_env.py</code></td><td>The 5-tool environment. Manages current policy state, implements blind edit_policy, minimal compile_check, and submit with scoring.</td></tr>
+          <tr><td><code>run_agent.py</code></td><td>Agent harness. Runs Claude (via Anthropic API) or GPT/o3 (via OpenAI API) through tasks with a ThreadPoolExecutor. Saves results as JSON + CSV.</td></tr>
+          <tr><td><code>calibration.py</code></td><td>Suite generator. Applies behavioral gap filter, gold self-check, and back-fill for skipped seeds. Produces the final 20-task benchmark.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <h3>How to run it</h3>
+      <pre>pip install anthropic openai pyyaml
+export ANTHROPIC_API_KEY=sk-...
+
+# Run the full benchmark (20 tasks)
+python run_agent.py \
+  --model claude-sonnet-4-6 \
+  --n_tasks 20 \
+  --suite ultra_only \
+  --output results/ \
+  --workers 3
+
+# Generate and inspect tasks
+python calibration.py
+python task_generator.py
+
+# Run a single task interactively
+python run_agent.py \
+  --model claude-sonnet-4-6 --demo</pre>
+
+      <div class="three-col" style="gap:12px; margin-top:16px;">
+        <div class="card" style="text-align:center; padding:14px 8px;">
+          <div class="big-stat indigo" style="font-size:1.8rem;">JSON</div>
+          <div class="stat-label">full trajectories saved</div>
+        </div>
+        <div class="card" style="text-align:center; padding:14px 8px;">
+          <div class="big-stat indigo" style="font-size:1.8rem;">CSV</div>
+          <div class="stat-label">scores + metadata</div>
+        </div>
+        <div class="card" style="text-align:center; padding:14px 8px;">
+          <div class="big-stat green" style="font-size:1.8rem;">≤1s</div>
+          <div class="stat-label">per task scored</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 15: Data produced -->
+<div class="slide">
+  <div class="label">Data Produced — What Each Run Generates</div>
+  <h2>Every benchmark run produces 5 artifact types</h2>
+
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <h3>Per-task artifacts</h3>
+        <div class="kv"><span class="kv-k">initial_policy (YAML)</span><span class="kv-v">What the model starts with</span></div>
+        <div class="kv"><span class="kv-k">update_stream (list of strings)</span><span class="kv-v">The 8–10 business memos</span></div>
+        <div class="kv"><span class="kv-k">gold_policy (YAML)</span><span class="kv-v">The correct final state</span></div>
+        <div class="kv"><span class="kv-k">metadata</span><span class="kv-v">domain, n_rules, n_updates, seed, behavioral gap</span></div>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h3>Per-run artifacts</h3>
+        <div class="kv"><span class="kv-k">Agent trajectories</span><span class="kv-v">Ordered list of {tool, args, result} per task</span></div>
+        <div class="kv"><span class="kv-k">Final scores</span><span class="kv-v">Behavioral equivalence score (0–1), pass flag</span></div>
+        <div class="kv"><span class="kv-k">Failure breakdowns</span><span class="kv-v">Per-task counts of each failure category</span></div>
+        <div class="kv"><span class="kv-k">Static issues</span><span class="kv-v">Dangling override refs in submitted policy</span></div>
+        <div class="kv"><span class="kv-k">Elapsed time + tool count</span><span class="kv-v">Per-task efficiency metrics</span></div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Example trajectory entry (JSON)</h3>
+      <pre style="font-size:0.76rem;">{
+  "task_id": "task_0000",
+  "domain": "refund",
+  "n_rules_initial": 12,
+  "n_updates": 8,
+  "model": "claude-sonnet-4-6",
+  "final_score": 0.366,
+  "success": false,
+  "n_tool_calls": 5,
+  "elapsed_seconds": 160.8,
+  "failure_breakdown": {
+    "wrong_priority": 591,
+    "stale_rule_retained": 677
+  },
+  "static_issues": [],
+  "trajectory": [
+    {"tool": "read_policy",  "result": {"length": 1862}},
+    {"tool": "read_updates", "result": {"n_updates": 8}},
+    {"tool": "edit_policy",  "result": {"status": "ok"}},
+    {"tool": "compile_check","result": {"status": "ok"}},
+    {"tool": "submit",       "result": {
+      "final_score": 0.366,
+      "matches": 732,
+      "mismatches": 1268,
+      "failure_breakdown": { ... }
+    }}
+  ]
+}</pre>
+
+      <div class="callout callout-blue" style="margin-top:12px;">
+        <p>Failure trajectories are the most valuable artifact for training. They show exactly where the model's reasoning broke down — which edit was wrong, how wrong, and in what way. This enables targeted RLHF or fine-tuning on the specific failure modes.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ SLIDE 16: Why useful -->
+<div class="slide">
+  <div class="label">Why StateBench Is Useful</div>
+  <h2>For evaluation and for training</h2>
+
+  <div class="two-col">
+    <div class="card green">
+      <h3>For evaluation</h3>
+      <ul class="clean">
+        <li><strong>Clean capability gap:</strong> global state tracking under sequential interacting updates — not hallucination, formatting, or refusal</li>
+        <li><strong>Hard to overfit:</strong> combinatorial task space, exact behavioral equivalence scoring (no rubric), surface form uninformative about update type</li>
+        <li><strong>Maps to production tasks:</strong> config maintenance, rule engine updates, sequential migrations, compliance document edits</li>
+        <li><strong>No LLM judge:</strong> fully deterministic, identical score on every run with the same policies and seed</li>
+        <li><strong>Tunable difficulty:</strong> rule count, update count, skeleton type — all independently controllable</li>
+      </ul>
+    </div>
+
+    <div class="card indigo">
+      <h3>For training</h3>
+      <ul class="clean">
+        <li><strong>Precise failure taxonomy:</strong> wrong_priority / stale_rule_retained / wrong_decision each pinpoints where the model lost global state</li>
+        <li><strong>Rich failure trajectories:</strong> each failure shows which priority swap was wrong, which rule was kept — enabling targeted fine-tuning</li>
+        <li><strong>Correct trajectories as positive signal:</strong> show the desired reasoning pattern — simulate all mutations, then edit once</li>
+        <li><strong>Scales to thousands of tasks:</strong> 4 domains, controllable difficulty, infinite seed space — suitable as both eval suite and training data generator</li>
+      </ul>
+
+      <div class="callout callout-blue" style="margin-top:14px;">
+        <p>The benchmark can generate training data at scale for the exact failure mode it measures: priority arithmetic across non-commutative mutations on a shared rule system.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

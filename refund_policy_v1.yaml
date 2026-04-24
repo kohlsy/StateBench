@@ -1,0 +1,56 @@
+# StateBench Example: Customer Refund Policy (initial version)
+
+definitions:
+  standard_window: 30
+  extended_window: 90
+  max_refund_amount: 500
+  loyalty_tiers: [bronze, silver, gold, platinum]
+
+rules:
+  - id: base_refund
+    description: "Standard refund eligibility"
+    conditions:
+      - "purchase_age_days < {standard_window}"
+      - "item_condition in ['unopened', 'defective']"
+    decision: approve_refund
+    priority: 1
+
+  - id: defective_override
+    description: "Defective items get extended window"
+    conditions:
+      - "purchase_age_days < {extended_window}"
+      - "item_condition == 'defective'"
+    decision: approve_refund
+    priority: 2
+    overrides: [base_refund]
+
+  - id: high_value_block
+    description: "High-value items require manager approval"
+    conditions:
+      - "item_price > {max_refund_amount}"
+    decision: escalate_to_manager
+    priority: 3
+    overrides: [base_refund, defective_override]
+
+  - id: loyalty_exception
+    description: "Platinum members always get refunds"
+    conditions:
+      - "customer_tier == 'platinum'"
+    decision: approve_refund
+    priority: 4
+    overrides: [high_value_block]
+    exceptions: []
+
+  - id: final_sale_block
+    description: "Final sale items are never refundable"
+    conditions:
+      - "is_final_sale == True"
+    decision: deny_refund
+    priority: 5
+    overrides: [base_refund, defective_override, loyalty_exception]
+
+  - id: default_deny
+    description: "Default: deny refund if no rule matches"
+    conditions: []
+    decision: deny_refund
+    priority: 0

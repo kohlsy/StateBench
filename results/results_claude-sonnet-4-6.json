@@ -1,0 +1,302 @@
+[
+  {
+    "task_id": "task_0000",
+    "domain": "refund",
+    "difficulty": "medium",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSY38Fnqfyuow3ybsV'}"
+  },
+  {
+    "task_id": "task_0001",
+    "domain": "approval",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSY2t7UYH4KYeLB6Pq'}"
+  },
+  {
+    "task_id": "task_0002",
+    "domain": "access_control",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSY2dv7teoWWDBkm2Y'}"
+  },
+  {
+    "task_id": "task_0003",
+    "domain": "escalation",
+    "difficulty": "very_hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSYwx2V9VDk7sEQdfb'}"
+  },
+  {
+    "task_id": "task_0004",
+    "domain": "refund",
+    "difficulty": "medium",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSZ7cqwrbTJfbSNAEk'}"
+  },
+  {
+    "task_id": "task_0005",
+    "domain": "approval",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSYwT8iakKmto67AXg'}"
+  },
+  {
+    "task_id": "task_0006",
+    "domain": "access_control",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSZZuXMh8R1d2NaLw3'}"
+  },
+  {
+    "task_id": "task_0007",
+    "domain": "escalation",
+    "difficulty": "very_hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSZa9mXTHLaie8tSbn'}"
+  },
+  {
+    "task_id": "task_0008",
+    "domain": "refund",
+    "difficulty": "medium",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSZtkRfyN6hGGCdXKQ'}"
+  },
+  {
+    "task_id": "task_0009",
+    "domain": "approval",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSa7eUtFADHzehRHSC'}"
+  },
+  {
+    "task_id": "task_0010",
+    "domain": "access_control",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSaB7sZZEztApeLtFU'}"
+  },
+  {
+    "task_id": "task_0011",
+    "domain": "escalation",
+    "difficulty": "very_hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSaSz7211oeFhMUrJQ'}"
+  },
+  {
+    "task_id": "task_0012",
+    "domain": "refund",
+    "difficulty": "medium",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSb4wWuqkw3hmAuUme'}"
+  },
+  {
+    "task_id": "task_0013",
+    "domain": "approval",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSb8Qtf3curnoBuEFr'}"
+  },
+  {
+    "task_id": "task_0014",
+    "domain": "access_control",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSb8fNwd5EA7smLFKD'}"
+  },
+  {
+    "task_id": "task_0015",
+    "domain": "escalation",
+    "difficulty": "very_hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSbgQKZFHU9HQHr7k8'}"
+  },
+  {
+    "task_id": "task_0016",
+    "domain": "refund",
+    "difficulty": "medium",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSbm7Yayz3CD5bpQte'}"
+  },
+  {
+    "task_id": "task_0017",
+    "domain": "approval",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSbgA54F87vynwEx7N'}"
+  },
+  {
+    "task_id": "task_0018",
+    "domain": "access_control",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRScJcEgAc5RzxiXgvz'}"
+  },
+  {
+    "task_id": "task_0019",
+    "domain": "escalation",
+    "difficulty": "very_hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRScfSHv3ntwF43hpbG'}"
+  },
+  {
+    "task_id": "task_0020",
+    "domain": "refund",
+    "difficulty": "medium",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRScQogR5t6rKfmYG1s'}"
+  },
+  {
+    "task_id": "task_0021",
+    "domain": "approval",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSdR5tbBC88FyUZzoC'}"
+  },
+  {
+    "task_id": "task_0022",
+    "domain": "access_control",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSdUJtGFD6n7LC6jcX'}"
+  },
+  {
+    "task_id": "task_0023",
+    "domain": "escalation",
+    "difficulty": "very_hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSdgCzxcHNY4ky2cvj'}"
+  },
+  {
+    "task_id": "task_0024",
+    "domain": "refund",
+    "difficulty": "medium",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSdyZrefr6eTiBUHNb'}"
+  },
+  {
+    "task_id": "task_0025",
+    "domain": "approval",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSeECKuyK8ZbMPDhJS'}"
+  },
+  {
+    "task_id": "task_0026",
+    "domain": "access_control",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSeJfBauQGsq6pAocP'}"
+  },
+  {
+    "task_id": "task_0027",
+    "domain": "escalation",
+    "difficulty": "very_hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSecX2dg4FAa543RWR'}"
+  },
+  {
+    "task_id": "task_0028",
+    "domain": "refund",
+    "difficulty": "medium",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSer9h3T8SHUuPAmWT'}"
+  },
+  {
+    "task_id": "task_0029",
+    "domain": "approval",
+    "difficulty": "hard",
+    "model": "claude-sonnet-4-6",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaKRSf8Gv2Nhui2RxztLy'}"
+  }
+]

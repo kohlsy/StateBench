@@ -1,0 +1,389 @@
+[
+  {
+    "task_id": "task_0000",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 12,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.634,
+    "model": "o3",
+    "final_score": 0.6575,
+    "success": false,
+    "n_tool_calls": 4,
+    "elapsed_seconds": 126.3,
+    "failure_breakdown": {
+      "stale_rule_retained": 685
+    },
+    "static_issues": [],
+    "trajectory_length": 4
+  },
+  {
+    "task_id": "task_0001",
+    "domain": "approval",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 13,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.63,
+    "model": "o3",
+    "final_score": 0.464,
+    "success": false,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 265.6,
+    "failure_breakdown": {
+      "wrong_priority": 587,
+      "stale_rule_retained": 485
+    },
+    "static_issues": [],
+    "trajectory_length": 5
+  },
+  {
+    "task_id": "task_0002",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 14,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.436,
+    "model": "o3",
+    "final_score": 0.7775,
+    "success": false,
+    "n_tool_calls": 4,
+    "elapsed_seconds": 122.5,
+    "failure_breakdown": {
+      "stale_rule_retained": 262,
+      "wrong_priority": 183
+    },
+    "static_issues": [],
+    "trajectory_length": 4
+  },
+  {
+    "task_id": "task_0003",
+    "domain": "escalation",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 15,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.528,
+    "model": "o3",
+    "final_score": 0.5675,
+    "success": false,
+    "n_tool_calls": 4,
+    "elapsed_seconds": 79.8,
+    "failure_breakdown": {
+      "stale_rule_retained": 126,
+      "wrong_priority": 739
+    },
+    "static_issues": [
+      "Rule 'r003' overrides non-existent rule 'r002'"
+    ],
+    "trajectory_length": 4
+  },
+  {
+    "task_id": "task_0004",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 16,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.314,
+    "model": "o3",
+    "final_score": 0.7555,
+    "success": false,
+    "n_tool_calls": 4,
+    "elapsed_seconds": 131.2,
+    "failure_breakdown": {
+      "wrong_priority": 280,
+      "wrong_decision": 90,
+      "stale_rule_retained": 119
+    },
+    "static_issues": [
+      "Rule 'r010' overrides non-existent rule 'r009'"
+    ],
+    "trajectory_length": 4
+  },
+  {
+    "task_id": "task_0005",
+    "domain": "approval",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 12,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.662,
+    "model": "o3",
+    "final_score": 0.993,
+    "success": true,
+    "n_tool_calls": 3,
+    "elapsed_seconds": 59.3,
+    "failure_breakdown": {
+      "wrong_priority": 14
+    },
+    "static_issues": [],
+    "trajectory_length": 3
+  },
+  {
+    "task_id": "task_0006",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 13,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.546,
+    "model": "o3",
+    "final_score": 0.6335,
+    "success": false,
+    "n_tool_calls": 6,
+    "elapsed_seconds": 186.4,
+    "failure_breakdown": {
+      "wrong_priority": 729,
+      "stale_rule_retained": 4
+    },
+    "static_issues": [],
+    "trajectory_length": 6
+  },
+  {
+    "task_id": "task_0007",
+    "domain": "escalation",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 14,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.376,
+    "model": "o3",
+    "final_score": 0.6325,
+    "success": false,
+    "n_tool_calls": 4,
+    "elapsed_seconds": 99.5,
+    "failure_breakdown": {
+      "stale_rule_retained": 523,
+      "wrong_priority": 212
+    },
+    "static_issues": [],
+    "trajectory_length": 4
+  },
+  {
+    "task_id": "task_0008",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 15,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.55,
+    "model": "o3",
+    "final_score": 0.99,
+    "success": true,
+    "n_tool_calls": 4,
+    "elapsed_seconds": 96.9,
+    "failure_breakdown": {
+      "wrong_priority": 19,
+      "stale_rule_retained": 1
+    },
+    "static_issues": [],
+    "trajectory_length": 4
+  },
+  {
+    "task_id": "task_0009",
+    "domain": "approval",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 16,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.254,
+    "model": "o3",
+    "final_score": 0.771,
+    "success": false,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 217.7,
+    "failure_breakdown": {
+      "stale_rule_retained": 417,
+      "wrong_priority": 32,
+      "wrong_decision": 9
+    },
+    "static_issues": [],
+    "trajectory_length": 5
+  },
+  {
+    "task_id": "task_0010",
+    "domain": "escalation",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 13,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.458,
+    "model": "o3",
+    "final_score": 0.857,
+    "success": false,
+    "n_tool_calls": 8,
+    "elapsed_seconds": 372.6,
+    "failure_breakdown": {
+      "stale_rule_retained": 177,
+      "wrong_priority": 104,
+      "wrong_decision": 5
+    },
+    "static_issues": [],
+    "trajectory_length": 8
+  },
+  {
+    "task_id": "task_0011",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 14,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.41,
+    "model": "o3",
+    "final_score": 0.801,
+    "success": false,
+    "n_tool_calls": 4,
+    "elapsed_seconds": 151.7,
+    "failure_breakdown": {
+      "stale_rule_retained": 398
+    },
+    "static_issues": [],
+    "trajectory_length": 4
+  },
+  {
+    "task_id": "task_0012",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 16,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.502,
+    "model": "o3",
+    "final_score": 0.4985,
+    "success": false,
+    "n_tool_calls": 4,
+    "elapsed_seconds": 150.0,
+    "failure_breakdown": {
+      "wrong_priority": 254,
+      "stale_rule_retained": 749
+    },
+    "static_issues": [
+      "Rule 'r012' overrides non-existent rule 'r006'",
+      "Rule 'r012' overrides non-existent rule 'r003'"
+    ],
+    "trajectory_length": 4
+  },
+  {
+    "task_id": "task_0013",
+    "domain": "escalation",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 12,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.384,
+    "model": "o3",
+    "final_score": 0.0,
+    "success": false,
+    "n_tool_calls": 3,
+    "elapsed_seconds": 151.2,
+    "failure_breakdown": {},
+    "static_issues": [],
+    "trajectory_length": 3
+  },
+  {
+    "task_id": "task_0014",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 13,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.288,
+    "model": "o3",
+    "final_score": 0.7145,
+    "success": false,
+    "n_tool_calls": 4,
+    "elapsed_seconds": 72.9,
+    "failure_breakdown": {
+      "stale_rule_retained": 234,
+      "wrong_decision": 330,
+      "wrong_priority": 7
+    },
+    "static_issues": [],
+    "trajectory_length": 4
+  },
+  {
+    "task_id": "task_0015",
+    "domain": "escalation",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 16,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.26,
+    "model": "o3",
+    "final_score": 0.7575,
+    "success": false,
+    "n_tool_calls": 4,
+    "elapsed_seconds": 106.6,
+    "failure_breakdown": {
+      "stale_rule_retained": 219,
+      "wrong_priority": 266
+    },
+    "static_issues": [],
+    "trajectory_length": 4
+  },
+  {
+    "task_id": "task_0016",
+    "domain": "refund",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 12,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.402,
+    "model": "o3",
+    "final_score": 0.1055,
+    "success": false,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 165.9,
+    "failure_breakdown": {
+      "wrong_priority": 1326,
+      "stale_rule_retained": 156,
+      "wrong_decision": 307
+    },
+    "static_issues": [],
+    "trajectory_length": 5
+  },
+  {
+    "task_id": "task_0017",
+    "domain": "approval",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 13,
+    "n_updates": 8,
+    "behavioral_diff_gold_vs_initial": 0.766,
+    "model": "o3",
+    "final_score": 0.7165,
+    "success": false,
+    "n_tool_calls": 4,
+    "elapsed_seconds": 141.5,
+    "failure_breakdown": {
+      "wrong_priority": 556,
+      "wrong_decision": 11
+    },
+    "static_issues": [],
+    "trajectory_length": 4
+  },
+  {
+    "task_id": "task_0018",
+    "domain": "access_control",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 14,
+    "n_updates": 9,
+    "behavioral_diff_gold_vs_initial": 0.366,
+    "model": "o3",
+    "final_score": 0.6025,
+    "success": false,
+    "n_tool_calls": 4,
+    "elapsed_seconds": 49.7,
+    "failure_breakdown": {
+      "wrong_priority": 315,
+      "stale_rule_retained": 460,
+      "wrong_decision": 20
+    },
+    "static_issues": [],
+    "trajectory_length": 4
+  },
+  {
+    "task_id": "task_0019",
+    "domain": "escalation",
+    "difficulty": "ultra_hard",
+    "n_rules_initial": 15,
+    "n_updates": 10,
+    "behavioral_diff_gold_vs_initial": 0.544,
+    "model": "o3",
+    "final_score": 0.713,
+    "success": false,
+    "n_tool_calls": 5,
+    "elapsed_seconds": 210.4,
+    "failure_breakdown": {
+      "stale_rule_retained": 151,
+      "wrong_priority": 423
+    },
+    "static_issues": [],
+    "trajectory_length": 5
+  }
+]
